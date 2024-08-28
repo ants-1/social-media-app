@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import authRoutes from "./routes/authRoutes";
 import 'dotenv/config'
 
 const app = express();
@@ -19,6 +20,8 @@ async function main() {
 
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use('/auth', authRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port: http://localhost:${PORT}/`);
