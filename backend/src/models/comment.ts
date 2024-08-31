@@ -1,15 +1,17 @@
-import mongoose from "mongoose";
-import { Schema, Types } from "mongoose";
+import mongoose, { Model, Schema, Types } from "mongoose";
 
-interface IComment {
-  author: Types.ObjectId,
-  text: string,
-  likes: Number,
-  dislikes: Number,
-  timestamp: Date,
-}
+export interface IComment {
+  _id: Types.ObjectId;
+  author: Types.ObjectId;
+  text: string;
+  likes: Number;
+  dislikes: Number;
+  timestamp: Date;
+};
 
-const CommentSchema = new Schema<IComment>({
+type CommentModel = Model<IComment>;
+
+const CommentSchema = new Schema<IComment, CommentModel>({
   author: { type: Schema.Types.ObjectId, ref: "User" },
   text: { type: String },
   likes: { type: Number, default: 0 },
@@ -21,4 +23,4 @@ CommentSchema.virtual("url").get(function () {
   return `/comments/${this._id}`;
 });
 
-export default mongoose.model<IComment>("Comment", CommentSchema);
+export default mongoose.model<IComment, CommentModel>("Comment", CommentSchema);

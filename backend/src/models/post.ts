@@ -1,18 +1,20 @@
-import mongoose from "mongoose";
-import { Schema, Types } from "mongoose";
+import mongoose, { Schema, Types, Model }  from "mongoose";
 
-interface IPost {
-  author: Types.ObjectId,
-  content: string,
-  imgUrl: string,
-  likes: Number,
-  likedBy: [Types.ObjectId],
+export interface IPost {
+  _id: Types.ObjectId;
+  author: Types.ObjectId;
+  content: string;
+  imgUrl: string;
+  likes: Number;
+  likedBy: Types.ObjectId[],
   dislikes: Number,
-  comments: [Types.ObjectId],
+  comments: Types.ObjectId[],
   timestamp: Date,
 }
 
-const PostSchema = new Schema<IPost>({
+type PostModel = Model<IPost>;
+
+const PostSchema = new Schema<IPost, PostModel>({
   author: { type: Schema.Types.ObjectId, ref: "User" },
   content: { type: String },
   imgUrl: { type: String, default: "" },
@@ -27,4 +29,4 @@ PostSchema.virtual("url").get(function () {
   return `/posts/${this._id}`;
 });
 
-export default mongoose.model<IPost>("Post", PostSchema);
+export default mongoose.model<IPost, PostModel>("Post", PostSchema);
