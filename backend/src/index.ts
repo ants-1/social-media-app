@@ -7,6 +7,7 @@ import passport from "passport";
 import "dotenv/config";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
+import postRoutes from "./routes/postRoutes";
 import initializePassport from "./passport/initializePassport";
 
 const app = express();
@@ -40,6 +41,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/auth", authRoutes);
 app.use("/", userRoutes);
+app.use("/", postRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port: http://localhost:${PORT}/`);

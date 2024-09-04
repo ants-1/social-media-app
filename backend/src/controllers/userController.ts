@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import User, { IUser } from "../models/user";
-import bcrypt from "bcrypt";
 import { Types } from "mongoose";
 
 // GET /users
