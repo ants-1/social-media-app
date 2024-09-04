@@ -109,19 +109,22 @@ const deletePost = async (req: Request, res: Response, next: NextFunction) => {
     const deletedPost = await Post.findByIdAndDelete(postId);
 
     if (!deletedPost) {
-      return res.status(404).json({ error: "Unable to delete post or post not found" });
+      return res
+        .status(404)
+        .json({ error: "Unable to delete post or post not found" });
     }
 
     user.posts = user.posts.filter((id) => !id.equals(postId));
     await user.save();
 
-    return res.status(200).json({ message: "Post successfully deleted", postId });
+    return res
+      .status(200)
+      .json({ message: "Post successfully deleted", postId });
   } catch (error) {
     console.error("Error while deleting post:", error);
     return res.status(500).json({ error: "Error while deleting post" });
   }
 };
-
 
 // POST /posts/:postId/users/:userId/likes
 const likePost = async (req: Request, res: Response, next: NextFunction) => {
@@ -138,7 +141,7 @@ const likePost = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     if (!user) {
-      return res.status(404).json({ error: "User not found"});
+      return res.status(404).json({ error: "User not found" });
     }
 
     let likesCount = Number(post.likes);
@@ -155,7 +158,7 @@ const likePost = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(200).json({ likes: post.likes });
   } catch (error) {
     console.error("Error while liking post:", error);
-    res.status(500).json({ error: "Erro while liking post" });
+    return res.status(500).json({ error: "Error while liking post" });
   }
 };
 
@@ -211,7 +214,10 @@ const dislikePost = async (req: Request, res: Response, next: NextFunction) => {
     await post.save();
 
     return res.status(200).json({ dislikes: post.dislikes });
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error while disliking post:", error);
+    return res.status(500).json({ error: "Error while disliking post" });
+  }
 };
 
 export default {
