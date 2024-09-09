@@ -12,9 +12,8 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     return res.status(200).json({ users: users });
-  } catch (error) {
-    console.error("Error while fetching users:", error);
-    return res.status(500).json({ error: "Error while fetching users" });
+  } catch (err) {
+    return next(err);
   }
 };
 
@@ -29,9 +28,8 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     return res.status(200).json({ user });
-  } catch (error) {
-    console.error("Error while fetching user:", error);
-    return res.status(500).json({ error: "Error while fetching user" });
+  } catch (err) {
+    return next(err);
   }
 };
 
@@ -61,11 +59,8 @@ const updateUserDate = async (
     }
 
     return res.status(200).json({ updatedUser });
-  } catch (error) {
-    console.error("Error while updating user information", error);
-    return res
-      .status(500)
-      .json({ error: "Error while updating user information:" });
+  } catch (err) {
+    return next(err);
   }
 };
 
@@ -124,32 +119,38 @@ const handleSendFriendRequest = async (
     const receiver = await User.findById(receiverObjectId);
 
     if (!sender || !receiver) {
-      return res.status(404).json({ error: "Sender or receiver not found"});
+      return res.status(404).json({ error: "Sender or receiver not found" });
     }
 
     // Check if receiver has already made a friend request
-    const alreadyRequested = receiver.friendRequests.some((id) => id.equals(senderObjectId));
+    const alreadyRequested = receiver.friendRequests.some((id) =>
+      id.equals(senderObjectId)
+    );
 
     if (alreadyRequested) {
-      return res.status(400).json({ error: "Sender has already made a friend request"});
+      return res
+        .status(400)
+        .json({ error: "Sender has already made a friend request" });
     }
-    
-    const alreadyFriends = sender.friends.some((id) => id.equals(receiverObjectId));
+
+    const alreadyFriends = sender.friends.some((id) =>
+      id.equals(receiverObjectId)
+    );
 
     if (alreadyFriends) {
-      return res.status(400).json({ error: "Sender is already friends with receiver" });
+      return res
+        .status(400)
+        .json({ error: "Sender is already friends with receiver" });
     }
 
     receiver.friendRequests.push(senderObjectId);
     await receiver.save();
 
-    return res.status(200).json({ message: "Follow request sent", receiver});
-
-  } catch (error) {
-    console.error("Error while sending friend request", error);
-    return res.status(500).json({ error: "Error while sending friend request"});
+    return res.status(200).json({ message: "Follow request sent", receiver });
+  } catch (err) {
+    return next(err);
   }
-}
+};
 
 // PUT users/:receiverId/friendRequest/:senderId
 export const handleAcceptFriendRequest = async (
@@ -170,16 +171,16 @@ export const handleAcceptFriendRequest = async (
       return res.status(404).json({ error: "Receiver or sender not found" });
     }
 
-    const isRequested = receiver.friendRequests.some(friendRequestId =>
+    const isRequested = receiver.friendRequests.some((friendRequestId) =>
       senderObjectId.equals(friendRequestId)
     );
 
     if (isRequested) {
       receiver.friendRequests = receiver.friendRequests.filter(
-        friendRequestId => !senderObjectId.equals(friendRequestId)
+        (friendRequestId) => !senderObjectId.equals(friendRequestId)
       );
       sender.friendRequests = sender.friendRequests.filter(
-        friendRequestId => !receiverObjectId.equals(friendRequestId)
+        (friendRequestId) => !receiverObjectId.equals(friendRequestId)
       );
 
       receiver.friends.push(senderObjectId);
@@ -188,17 +189,18 @@ export const handleAcceptFriendRequest = async (
       await receiver.save();
       await sender.save();
 
-      return res.status(200).json({ message: "Friend request accepted", receiver, sender });
+      return res
+        .status(200)
+        .json({ message: "Friend request accepted", receiver, sender });
     }
 
-    return res.status(404).json({ error: "Friend request not found or already accepted" });
-
-  } catch (error) {
-    console.error("Error while accepting friend request:", error);
-    return res.status(500).json({ error: "Error while accepting friend request" });
+    return res
+      .status(404)
+      .json({ error: "Friend request not found or already accepted" });
+  } catch (err) {
+    return next(err);
   }
 };
-
 
 // DELETE users/:receiverId/friendRequest/:senderId
 const handleDeleteFriendRequest = async (
@@ -219,24 +221,29 @@ const handleDeleteFriendRequest = async (
       return res.status(404).json({ error: "Sender or receiver not found" });
     }
 
-    const isRequested = receiver.friendRequests.some((id) => id.equals(senderObjectId));
+    const isRequested = receiver.friendRequests.some((id) =>
+      id.equals(senderObjectId)
+    );
 
     if (!isRequested) {
       return res.status(404).json({ error: "Friend request not found" });
     }
 
-    receiver.friendRequests = receiver.friendRequests.filter((id) => !id.equals(senderObjectId));
+    receiver.friendRequests = receiver.friendRequests.filter(
+      (id) => !id.equals(senderObjectId)
+    );
 
     await receiver.save();
 
-    return res.status(200).json({ message: "Friend request deleted successfully", receiver, sender });
-
-  } catch (error) {
-    console.error("Error while deleting friend request", error);
-    return res.status(500).json({ error: "Error while deleting friend request" });
+    return res.status(200).json({
+      message: "Friend request deleted successfully",
+      receiver,
+      sender,
+    });
+  } catch (err) {
+    return next(err);
   }
 };
-
 
 // DELETE /users/:userId/friends/:removedFriendId"
 const handleRemoveFriend = async (
@@ -256,27 +263,32 @@ const handleRemoveFriend = async (
 
     user.friends = user.friends.filter((id) => !id.equals(removedFriendId));
 
-    removedFriend.friends = removedFriend.friends.filter((id) => !id.equals(userId));
+    removedFriend.friends = removedFriend.friends.filter(
+      (id) => !id.equals(userId)
+    );
 
-    const userFriendRemoved = user.friends.length < (await User.findById(userId)).friends.length;
-    const removedFriendUserRemoved = removedFriend.friends.length < (await User.findById(removedFriendId)).friends.length;
+    const userFriendRemoved =
+      user.friends.length < (await User.findById(userId)).friends.length;
+    const removedFriendUserRemoved =
+      removedFriend.friends.length <
+      (await User.findById(removedFriendId)).friends.length;
 
     if (!userFriendRemoved || !removedFriendUserRemoved) {
-      return res.status(404).json({ error: "Error removing friend from one or both friends lists" });
+      return res.status(404).json({
+        error: "Error removing friend from one or both friends lists",
+      });
     }
 
     await user.save();
     await removedFriend.save();
 
-    return res.status(200).json({ message: "Friendship successfully removed from both users" });
-
-  } catch (error) {
-    console.error("Error while deleting friend from friend list:", error);
-    return res.status(500).json({ error: "Error while deleting friend from friend list" });
+    return res
+      .status(200)
+      .json({ message: "Friendship successfully removed from both users" });
+  } catch (err) {
+    return next(err);
   }
 };
-
-
 
 export default {
   getAllUsers,

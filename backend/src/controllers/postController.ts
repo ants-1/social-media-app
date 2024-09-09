@@ -13,9 +13,8 @@ const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     return res.status(200).json(posts);
-  } catch (error) {
-    console.error("Error while fetching posts:", error);
-    return res.status(500).json({ error: "Error while fetching posts" });
+  } catch (err) {
+    return next(err);
   }
 };
 
@@ -35,9 +34,8 @@ const getPostDetails = async (
     }
 
     return res.status(200).json(post);
-  } catch (error) {
-    console.error("Error while fecthing post", error);
-    return res.status(500).json({ error: "Error while fetching post" });
+  } catch (err) {
+    return next(err);
   }
 };
 
@@ -65,9 +63,8 @@ const addPost = async (req: Request, res: Response, next: NextFunction) => {
     await newPost.save();
 
     return res.status(200).json(newPost);
-  } catch (error) {
-    console.error("Error while creating a new post", error);
-    return res.status(500).json({ error: "Error while creating a new post" });
+  } catch (err) {
+    return next(err);
   }
 };
 
@@ -89,9 +86,8 @@ const editPost = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     return res.status(200).json(post);
-  } catch (error) {
-    console.error("Error while updating post:", error);
-    return res.status(500).json({ error: "Error while updating post" });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -120,9 +116,8 @@ const deletePost = async (req: Request, res: Response, next: NextFunction) => {
     return res
       .status(200)
       .json({ message: "Post successfully deleted", postId });
-  } catch (error) {
-    console.error("Error while deleting post:", error);
-    return res.status(500).json({ error: "Error while deleting post" });
+  } catch (err) {
+    return next(err);
   }
 };
 
@@ -156,9 +151,8 @@ const likePost = async (req: Request, res: Response, next: NextFunction) => {
     await post.save();
 
     return res.status(200).json({ likes: post.likes });
-  } catch (error) {
-    console.error("Error while liking post:", error);
-    return res.status(500).json({ error: "Error while liking post" });
+  } catch (err) {
+    return next(err);
   }
 };
 
@@ -184,11 +178,8 @@ const getPostLikedBy = async (
     }
 
     return res.status(200).json(likedBy);
-  } catch (error) {
-    console.error("Error while fetching post's liked by:", error);
-    return res
-      .status(500)
-      .json({ error: "Error while fetching post's liked by" });
+  } catch (err) {
+    return next(err);
   }
 };
 
@@ -214,9 +205,8 @@ const dislikePost = async (req: Request, res: Response, next: NextFunction) => {
     await post.save();
 
     return res.status(200).json({ dislikes: post.dislikes });
-  } catch (error) {
-    console.error("Error while disliking post:", error);
-    return res.status(500).json({ error: "Error while disliking post" });
+  } catch (err) {
+    return next(err);
   }
 };
 
