@@ -1,12 +1,20 @@
+"use client"
+
 import { useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { ThumbsDown, ThumbsUp, MessageCircle } from "lucide-react"
+import { ThumbsDown, ThumbsUp, MoreHorizontal } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
-export default function PostCard() {
-  const [likeCount, setLikeCount] = useState(42)
-  const [dislikeCount, setDislikeCount] = useState(8)
+export default function CommentCard() {
+  const [likeCount, setLikeCount] = useState(15)
+  const [dislikeCount, setDislikeCount] = useState(2)
   const [userLiked, setUserLiked] = useState(false)
   const [userDisliked, setUserDisliked] = useState(false)
 
@@ -39,20 +47,31 @@ export default function PostCard() {
   }
 
   return (
-    <Card className="w-4/5 xl:w-3/5 space-y-2">
+    <Card className="w-4/5 xl:w-3/5 ">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar>
-          <AvatarImage src="/placeholder-avatar.jpg" alt="@username" />
-          <AvatarFallback>UN</AvatarFallback>
+          <AvatarImage src="/placeholder-avatar.jpg" alt="@commenter" />
+          <AvatarFallback>CM</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
-          <p className="text-sm font-semibold">@username</p>
-          <p className="text-xs text-muted-foreground">Posted on April 20, 2023</p>
+          <p className="text-sm font-semibold">@commenter</p>
+          <p className="text-xs text-muted-foreground">Commented 2 hours ago</p>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="ml-auto h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4" />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
       <CardContent>
         <p className="text-sm">
-          This is a sample post content. It can be a longer text describing the user's thoughts, experiences, or any other content they want to share with their followers.
+          This is a great post! I really enjoyed reading about your experiences and insights. It's always refreshing to see such thoughtful content on social media.
         </p>
       </CardContent>
       <CardFooter className="flex justify-between">
@@ -76,9 +95,6 @@ export default function PostCard() {
             {dislikeCount}
           </Button>
         </div>
-        <Button variant="ghost" size="sm">
-          <MessageCircle className="w-4 h-4 mr-1" />42
-        </Button>
       </CardFooter>
     </Card>
   )

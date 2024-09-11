@@ -10,7 +10,7 @@ export default function Explore() {
   
         <div className="flex flex-col w-full">
           <Header title="Explore" />
-          <div className="flex flex-col items-center justify-center gap-4 h-full border-b mt-10">
+          <div className="flex flex-col items-center justify-center gap-4 h-full border-b py-10">
             <PostCard />
             <PostCard />
             <PostCard />
