@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ChevronRight, ChevronLeft, Home, Settings, Users, LogOutIcon, HashIcon } from "lucide-react"
+import { Link } from "react-router-dom"
 
 export default function CollapsibleSidebar() {
   const [isOpen, setIsOpen] = useState(true)
@@ -26,14 +27,18 @@ export default function CollapsibleSidebar() {
           </div>
           <ScrollArea className="flex-grow">
             <CollapsibleContent forceMount className="flex flex-col space-y-2">
-              <Button variant="ghost" className="justify-start h-12">
-                <Home className="mx-2 h-6 w-6" />
-                {isOpen && <span>Home</span>}
-              </Button>
-              <Button variant="ghost" className="justify-start h-12">
-                <HashIcon className="mx-2 h-6 w-6" />
-                {isOpen && <span>Explore</span>}
-              </Button>
+              <Link to="/">
+                <Button variant="ghost" className="justify-start h-12 w-full">
+                  <Home className="mx-2 h-6 w-6" />
+                  {isOpen && <span>Home</span>}
+                </Button>
+              </Link>
+              <Link to="/explore">
+                <Button variant="ghost" className="justify-start h-12 w-full">
+                  <HashIcon className="mx-2 h-6 w-6" />
+                  {isOpen && <span>Explore</span>}
+                </Button>
+              </Link>
               <Button variant="ghost" className="justify-start h-12">
                 <Users className="mx-2 h-6 w-6" />
                 {isOpen && <span>Profile</span>}

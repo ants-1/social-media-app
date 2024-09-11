@@ -39,7 +39,7 @@ export default function PostCard() {
   }
 
   return (
-    <Card className="w-3/5 space-y-2">
+    <Card className="w-2/3 lg:w-3/5 space-y-2">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar>
           <AvatarImage src="/placeholder-avatar.jpg" alt="@username" />
