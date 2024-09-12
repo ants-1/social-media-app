@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -47,7 +45,7 @@ export default function CommentCard() {
   }
 
   return (
-    <Card className="w-4/5 xl:w-3/5 ">
+    <Card className="w-4/5 max-w-[32rem]">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar>
           <AvatarImage src="/placeholder-avatar.jpg" alt="@commenter" />

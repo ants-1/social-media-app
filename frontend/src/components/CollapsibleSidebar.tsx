@@ -39,10 +39,12 @@ export default function CollapsibleSidebar() {
                   {isOpen && <span>Explore</span>}
                 </Button>
               </Link>
-              <Button variant="ghost" className="justify-start h-12">
-                <Users className="mx-2 h-6 w-6" />
-                {isOpen && <span>Profile</span>}
-              </Button>
+              <Link to="/profile">
+                <Button variant="ghost" className="justify-start h-12 w-full">
+                  <Users className="mx-2 h-6 w-6" />
+                  {isOpen && <span>Profile</span>}
+                </Button>
+              </Link>
               <Button variant="ghost" className="justify-start h-12">
                 <Settings className="mx-2 h-6 w-6" />
                 {isOpen && <span>Settings</span>}
