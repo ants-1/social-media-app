@@ -3,14 +3,17 @@ import CommentCard from "@/components/CommentCard"
 import { CommentForm } from "@/components/CommentForm"
 import PostCard from "@/components/PostCard"
 import Sidebar from "@/components/Sidebar"
+import { useTheme } from "@/components/ThemeProvider"
 
 export default function Post() {
+  const { theme } = useTheme();
+
   return (
     <div className="flex">
       <CollapsibleSidebar />
 
       <div className="flex flex-col w-full">
-        <div className="flex items-center justify-center py-6  border-b bg-orange-200">
+        <div className={`flex items-center justify-center py-6  border-b ${theme === 'dark' ? 'bg-orange-400' : 'bg-orange-200'}`}>
           <PostCard />
         </div>
         <div className="flex flex-col items-center justify-center gap-4 h-full  border-b py-10">

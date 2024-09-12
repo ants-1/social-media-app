@@ -1,10 +1,13 @@
 import { Home, Hash, Users, Settings } from "lucide-react";
+import { useTheme } from "./ThemeProvider";
 
 interface HeaderProps {
   title: string;
 }
 
 export default function Header({ title }: HeaderProps) {
+  const { theme } = useTheme();
+
   const renderIcon = () => {
     switch (title.toLowerCase()) {
       case "home":
@@ -21,9 +24,9 @@ export default function Header({ title }: HeaderProps) {
   };
 
   return (
-    <div className="w-full min-h-20 top-0 sticky border-b flex items-center pl-5 bg-orange-200 z-40">
+    <div className={`w-full min-h-20 top-0 sticky border-b flex items-center pl- 5 ${theme === 'dark' ? 'bg-orange-400' : 'bg-orange-200'} z-40`}>
       {renderIcon()}
-      <h1 className="text-black text-xl font-semibold">{title}</h1>
+      <h1 className={`${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'} text-xl font-semibold`}>{title}</h1>
     </div>
   );
 }

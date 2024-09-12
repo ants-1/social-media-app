@@ -1,24 +1,36 @@
 import { Route, Routes } from "react-router-dom"
+import { ThemeProvider, useTheme } from "./components/ThemeProvider"
 import Login from "./pages/Login"
 import SignUp from "./pages/SignUp"
 import Home from "./pages/Home"
 import Explore from "./pages/Explore"
 import Post from "./pages/Post"
 import Profile from "./pages/Profile"
+import Settings from "./pages/Settings"
 
-function App() {
+function AppContent() {
+  const { theme } = useTheme()
 
   return (
-    <div className="">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'} transition-colors duration-300`}>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/sign-up" element={<SignUp />}/>
-        <Route path="/" element={<Home />}/>
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/post" element={<Post />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+      <AppContent />
+    </ThemeProvider>
   )
 }
 
