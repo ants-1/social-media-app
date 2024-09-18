@@ -1,7 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
+
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
@@ -25,9 +27,18 @@ const formSchema = z.object({
   password: z.string().min(7, {
     message: "Password must be at least 7 characters.",
   }),
-})
+  confirmPassword: z.string().min(7, {
+    message: "Password must be at least 7 characters.",
+  }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match.",
+  path: ["confirmPassword"],
+});
 
 export function SignUpForm() {
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,11 +46,32 @@ export function SignUpForm() {
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
-  })
+  });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setErrorMessage(null);
+    try {
+      const response = await fetch("http://localhost:3000/auth/sign-up", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setErrorMessage(errorData.message || "An error occurred during sign-up.");
+        return;
+      }
+
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    }
   }
 
   return (
@@ -97,6 +129,20 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
         <div className="flex justify-between">
           <Button type="submit" className="w-1/3">
             Sign Up

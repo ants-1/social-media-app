@@ -64,6 +64,7 @@ export default function Profile() {
               <Button variant="outline">Send Request</Button>
             </div>
           )}
+          {/* Add button for chat feature that might be added later */}
           <p></p>
         </div>
 
