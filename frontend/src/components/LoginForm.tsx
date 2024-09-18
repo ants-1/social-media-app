@@ -1,7 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -24,6 +25,9 @@ const formSchema = z.object({
 })
 
 export function LoginForm() {
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,8 +36,28 @@ export function LoginForm() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setErrorMessage(null);
+    try {
+      const response = await fetch("http://localhost:3000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setErrorMessage(errorData.message || "An error occurred during sign-up.");
+        return;
+      }
+
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    }
   }
 
   return (
@@ -66,6 +90,7 @@ export function LoginForm() {
             </FormItem>
           )}
         />
+        {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
         <div className="flex justify-between">
           <Button type="submit" className="w-1/3">Login</Button>
           <Link to="/sign-up" className="w-1/3">
