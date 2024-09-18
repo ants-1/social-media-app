@@ -6,33 +6,49 @@ interface AuthenticatedRequest extends Request {
   authData?: any;
 }
 
-const verifyToken = (
+const TOKEN_ERROR_MESSAGE = "Invalid token";
+
+const verifyToken = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-) => {
-  const bearerHeader = req.headers["authorization"];
-
-  if (typeof bearerHeader !== "undefined") {
-    const bearer = bearerHeader.split(" ");
-
-    if (bearer.length === 2) {
-      const bearerToken = bearer[1];
-      req.token = bearerToken;
-
-      jwt.verify(req.token, process.env.TOKEN_SECRET_KEY || "", (err, authData) => {
-        if (err) {
-          return res.status(403).json({ message: "Forbidden" });
-        } else {
-          req.authData = authData;
-          next();
-        }
+): Promise<void | Response<any, Record<string, any>>> => {
+  try {
+    const bearerHeader = req.headers["authorization"];
+    if (!bearerHeader) {
+      return res.status(400).json({
+        error: { message: TOKEN_ERROR_MESSAGE },
       });
-    } else {
-      return res.status(403).json({ message: "Invalid token format" });
     }
-  } else {
-    return res.status(403).json({ message: "Unauthorized access" });
+
+    const bearer = bearerHeader.split(" ");
+    if (bearer.length !== 2 || bearer[0] !== "Bearer") {
+      return res.status(400).json({
+        error: { message: TOKEN_ERROR_MESSAGE },
+      });
+    }
+
+    const token = bearer[1];
+    if (!token) {
+      return res.status(400).json({
+        error: { message: TOKEN_ERROR_MESSAGE },
+      });
+    }
+
+    const SECRET = process.env.TOKEN_SECRET_KEY as string;
+    const decoded = jwt.verify(token, SECRET);
+
+    if (!decoded || typeof decoded !== "object") {
+      return res.status(400).json({
+        error: { message: TOKEN_ERROR_MESSAGE },
+      });
+    }
+    return res.status(200).json({ user: decoded.user });
+
+  } catch (error) {
+    return res.status(400).json({
+      error: { message: TOKEN_ERROR_MESSAGE },
+    });
   }
 };
 

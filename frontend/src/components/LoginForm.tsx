@@ -1,10 +1,11 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Link, useNavigate } from "react-router-dom"
-import { useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import useAuth from "@/hooks/useAuth";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -12,21 +13,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
   password: z.string().min(7, {
-    message: "Password must be at least 7 characters."
-  })
-})
+    message: "Password must be at least 7 characters.",
+  }),
+});
 
 export function LoginForm() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { setToken } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,10 +36,11 @@ export function LoginForm() {
       username: "",
       password: "",
     },
-  })
+  });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setErrorMessage(null);
+
     try {
       const response = await fetch("http://localhost:3000/auth/login", {
         method: "POST",
@@ -49,21 +52,26 @@ export function LoginForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        setErrorMessage(errorData.message || "An error occurred during sign-up.");
+        setErrorMessage(errorData.message || "An error occurred during login.");
         return;
       }
 
+      const data = await response.json();
+      setToken(data.token);
+
       navigate("/");
     } catch (error) {
-      console.error(error);
+      console.error("Login Error:", error);
       setErrorMessage("An unexpected error occurred. Please try again.");
     }
-  }
+  };
 
   return (
-
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-72 sm:w-96">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 w-72 sm:w-96"
+      >
         <FormField
           control={form.control}
           name="username"
@@ -77,6 +85,7 @@ export function LoginForm() {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -90,15 +99,23 @@ export function LoginForm() {
             </FormItem>
           )}
         />
-        {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+
+        {errorMessage && (
+          <p className="text-red-500 text-sm">{errorMessage}</p>
+        )}
+
         <div className="flex justify-between">
-          <Button type="submit" className="w-1/3">Login</Button>
+          <Button type="submit" className="w-1/3">
+            Login
+          </Button>
+
           <Link to="/sign-up" className="w-1/3">
-            <Button variant="outline" className="w-full">Sign Up</Button>
+            <Button variant="outline" className="w-full">
+              Sign Up
+            </Button>
           </Link>
         </div>
       </form>
-
     </Form>
-  )
+  );
 }
