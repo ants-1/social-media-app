@@ -4,9 +4,15 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ChevronRight, ChevronLeft, Home, Settings, Users, LogOutIcon, HashIcon } from "lucide-react"
 import { Link } from "react-router-dom"
+import useAuth from "@/hooks/useAuth"
 
 export default function CollapsibleSidebar() {
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(true);
+  const { logout } = useAuth();
+
+  function handleLogout() {
+    logout();
+  }
 
   return (
     <Collapsible
@@ -51,7 +57,8 @@ export default function CollapsibleSidebar() {
                   {isOpen && <span>Settings</span>}
                 </Button>
               </Link>
-              <Button variant="ghost" className="justify-start h-12 w-full">
+              <Button variant="ghost" className="justify-start h-12 w-full"
+                onClick={handleLogout}>
                 <LogOutIcon className="mx-2 h-6 w-6" />
                 {isOpen && <span>Logout</span>}
               </Button>

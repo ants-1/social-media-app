@@ -2,7 +2,7 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { useContext, useEffect } from "react";
 
 export default function useAuth() {
-  const { token, isAuth, setIsAuth, setToken } = useContext(AuthContext);
+  const { token, isAuth, setIsAuth, setToken, logout } = useContext(AuthContext);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -15,5 +15,5 @@ export default function useAuth() {
     }
   }, [setToken, setIsAuth]);
 
-  return { token, isAuth, setToken, setIsAuth };
+  return { token, isAuth, setToken, setIsAuth, logout };
 }
