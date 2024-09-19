@@ -7,7 +7,7 @@ const getAllComments = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { postId } = req.params;
 
@@ -34,7 +34,7 @@ const createComment = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { postId } = req.params;
 
@@ -64,7 +64,11 @@ const createComment = async (
 };
 
 // POST /posts/:postId/comments/:commentId/likes
-const likeComment = async (req: Request, res: Response, next: NextFunction) => {
+const likeComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { postId, commentId } = req.params;
 
@@ -100,7 +104,7 @@ const dislikeComment = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { postId, commentId } = req.params;
 

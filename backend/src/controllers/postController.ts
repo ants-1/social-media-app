@@ -4,9 +4,15 @@ import Post, { IPost } from "../models/post";
 import { Types } from "mongoose";
 
 // GET /posts
-const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
+const getAllPosts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
-    const posts = await Post.find().exec();
+    const posts = await Post.find()
+    .populate('author', 'username avatarUrl')
+    .exec();
 
     if (!posts) {
       return res.status(404).json({ mesasge: "No posts found" });
@@ -23,7 +29,7 @@ const getPostDetails = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { id } = req.params;
 
@@ -40,7 +46,11 @@ const getPostDetails = async (
 };
 
 // POST /posts/users/:id
-const addPost = async (req: Request, res: Response, next: NextFunction) => {
+const addPost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const userId = req.params.id;
     const user = await User.findById(userId);
@@ -69,7 +79,11 @@ const addPost = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // PUT /posts/:id
-const editPost = async (req: Request, res: Response, next: NextFunction) => {
+const editPost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { id } = req.params;
 
@@ -92,7 +106,11 @@ const editPost = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // DELETE /posts/:postId/user/:userId
-const deletePost = async (req: Request, res: Response, next: NextFunction) => {
+const deletePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { postId, userId } = req.params;
 
@@ -122,7 +140,11 @@ const deletePost = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // POST /posts/:postId/users/:userId/likes
-const likePost = async (req: Request, res: Response, next: NextFunction) => {
+const likePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { postId, userId } = req.params;
 
@@ -161,7 +183,7 @@ const getPostLikedBy = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { id } = req.params;
 
@@ -184,7 +206,11 @@ const getPostLikedBy = async (
 };
 
 // POST /posts/:id/dislikes
-const dislikePost = async (req: Request, res: Response, next: NextFunction) => {
+const dislikePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { id } = req.params;
 

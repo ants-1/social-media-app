@@ -3,7 +3,11 @@ import User, { IUser } from "../models/user";
 import { Types } from "mongoose";
 
 // GET /users
-const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+const getAllUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const users = await User.find().select("-password").exec();
 
@@ -18,7 +22,11 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // GET /users/:id
-const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+const getUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { id } = req.params;
     const user = await User.findById(id).exec();
@@ -38,7 +46,7 @@ const updateUserDate = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { id } = req.params;
 
@@ -108,7 +116,7 @@ const handleSendFriendRequest = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { senderId, receiverId } = req.params;
 
@@ -122,7 +130,6 @@ const handleSendFriendRequest = async (
       return res.status(404).json({ error: "Sender or receiver not found" });
     }
 
-    // Check if receiver has already made a friend request
     const alreadyRequested = receiver.friendRequests.some((id) =>
       id.equals(senderObjectId)
     );
@@ -157,7 +164,7 @@ export const handleAcceptFriendRequest = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { receiverId, senderId } = req.params;
 
@@ -207,7 +214,7 @@ const handleDeleteFriendRequest = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { receiverId, senderId } = req.params;
 
@@ -250,7 +257,7 @@ const handleRemoveFriend = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { userId, removedFriendId } = req.params;
 

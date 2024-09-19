@@ -22,7 +22,11 @@ const sign_up = async (
   })(req, res, next);
 };
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
+const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   passport.authenticate("login", async (err: Error, user: IUser) => {
     if (err || !user) {
       return res.status(400).json({ error: "Invalid credentials" });
