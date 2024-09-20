@@ -1,7 +1,7 @@
 import CollapsibleSidebar from "@/components/CollapsibleSidebar"
 import Header from "@/components/Header"
 import { PostForm } from "@/components/PostForm"
-import PostCard from "@/components/PostCard"
+// import PostCard from "@/components/PostCard"
 import Sidebar from "@/components/Sidebar"
 
 export default function Home() {
@@ -14,10 +14,10 @@ export default function Home() {
           <PostForm />
         </div>
         <div className="flex flex-col items-center justify-center gap-4 h-full border-b py-10">
+          {/* <PostCard />
           <PostCard />
           <PostCard />
-          <PostCard />
-          <PostCard />
+          <PostCard /> */}
         </div>
       </div>
       <Sidebar />

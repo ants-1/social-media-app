@@ -1,4 +1,4 @@
-import PostCard from "./PostCard"
+// import PostCard from "./PostCard"
 import CommentCard from "./CommentCard"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -16,10 +16,10 @@ export default function ProfileTab() {
         <TabsTrigger value="friends">Friends</TabsTrigger>
       </TabsList>
       <TabsContent value="posts" className="space-y-4 flex flex-col items-center">
+        {/* <PostCard />
         <PostCard />
         <PostCard />
-        <PostCard />
-        <PostCard />
+        <PostCard /> */}
       </TabsContent>
       <TabsContent value="comments" className="space-y-4 flex flex-col items-center -mt-0">
         <CommentCard />
