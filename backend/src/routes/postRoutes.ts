@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.get("/posts", postController.getAllPosts);
 
+router.get("/posts/users/:userId", postController.getAllUsersPosts);
+
 router.get("/posts/:id", postController.getPostDetails);
 
 router.post("/posts/users/:id", postController.addPost);

@@ -1,10 +1,23 @@
 import CollapsibleSidebar from "@/components/CollapsibleSidebar"
 import Header from "@/components/Header"
 import { PostForm } from "@/components/PostForm"
-// import PostCard from "@/components/PostCard"
+import PostCard from "@/components/PostCard"
 import Sidebar from "@/components/Sidebar"
+import { useFetchHomePosts } from "@/hooks/useFetchHomePosts"
+import useAuth from "@/hooks/useAuth"
 
 export default function Home() {
+  const { user } = useAuth();
+  const { posts, error } = useFetchHomePosts();
+
+  if (error) {
+    return <div>Error: {error}</div>
+  }
+
+  if (!user) {
+    return <div>Loading user information...</div>;
+  }
+
   return (
     <div className="flex">
       <CollapsibleSidebar />
@@ -14,10 +27,18 @@ export default function Home() {
           <PostForm />
         </div>
         <div className="flex flex-col items-center justify-center gap-4 h-full border-b py-10">
-          {/* <PostCard />
-          <PostCard />
-          <PostCard />
-          <PostCard /> */}
+          {posts ? (
+            posts.length > 0 ? (
+              posts.map((post) => (
+                <PostCard key={post._id} post={post} />
+              ))
+            ) : (
+              <p>No posts available</p>
+            )
+          ) : (
+            <p>Loading...</p>
+          )}
+
         </div>
       </div>
       <Sidebar />

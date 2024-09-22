@@ -11,11 +11,48 @@ const getAllPosts = async (
 ): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const posts = await Post.find()
-    .populate('author', 'username avatarUrl')
-    .exec();
+      .populate("author", "username avatarUrl friends")
+      .exec();
 
     if (!posts) {
       return res.status(404).json({ mesasge: "No posts found" });
+    }
+
+    return res.status(200).json(posts);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+// GET /posts/users/:id
+const getAllUsersPosts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response<any, Record<string, any>>> => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).exec();
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: `User with ID: ${userId} not found` });
+    }
+
+    const friendIds = user.friends.map(friend => friend._id);
+
+    const posts = await Post.find({
+      author: { $in: [...friendIds, user._id] }
+    })
+    .populate('author', 'username avatarUrl')
+    .populate('likedBy', 'username')
+    .populate('comments')
+    .sort({ timestamp: -1 })
+    .exec();
+
+    if (!posts) {
+      return res.status(404).json({ message: 'Not posts found' });
     }
 
     return res.status(200).json(posts);
@@ -238,6 +275,7 @@ const dislikePost = async (
 
 export default {
   getAllPosts,
+  getAllUsersPosts,
   getPostDetails,
   addPost,
   editPost,

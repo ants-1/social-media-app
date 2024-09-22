@@ -64,6 +64,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
         }
 
         const data = await response.json();
+        console.log('User data:', data.user); 
         setUser(data.user);
         setIsAuth(true);
       } catch (error) {
