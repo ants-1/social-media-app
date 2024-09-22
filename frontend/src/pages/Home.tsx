@@ -5,6 +5,7 @@ import PostCard from "@/components/PostCard"
 import Sidebar from "@/components/Sidebar"
 import { useFetchHomePosts } from "@/hooks/useFetchHomePosts"
 import useAuth from "@/hooks/useAuth"
+import ReactLoading from "react-loading";
 
 export default function Home() {
   const { user } = useAuth();
@@ -36,7 +37,7 @@ export default function Home() {
               <p>No posts available</p>
             )
           ) : (
-            <p>Loading...</p>
+            <ReactLoading type={"spin"} color="#000" />
           )}
 
         </div>

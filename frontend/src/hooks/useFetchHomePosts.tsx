@@ -34,10 +34,12 @@ export function useFetchHomePosts() {
   };
 
   useEffect(() => {
-    if (isAuth && user) {
       fetchPosts();
-    }
-  }, [isAuth, user]); 
+  }); 
+
+  const refreshPosts = () => {
+    fetchPosts();
+  };
   
-  return { posts, setPosts, error };
+  return { posts, setPosts, error, refreshPosts };
 }

@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import useAddPost from "@/hooks/useAddPost"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,12 +13,14 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
+import { useFetchHomePosts } from "@/hooks/useFetchHomePosts"
+
 
 const FormSchema = z.object({
   post: z
     .string()
-    .min(10, {
-      message: "Post must be at least 10 characters.",
+    .min(2, {
+      message: "Post must be at least 2 characters.",
     })
     .max(160, {
       message: "Post must not be longer than 160 characters.",
@@ -29,8 +32,17 @@ export function PostForm() {
     resolver: zodResolver(FormSchema),
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data)
+  const { createPost, error } = useAddPost();
+  const { refreshPosts } = useFetchHomePosts();
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const newPost = { content: data.post };
+    const createdPost = await createPost(newPost);
+
+    if (createdPost) {
+      refreshPosts();
+      form.reset({ post: "" }); 
+    }
   }
 
   return (
@@ -54,6 +66,7 @@ export function PostForm() {
           )}
         />
         <Button type="submit">Create</Button>
+        {error && <p className="text-red-500">{error}</p>}
       </form>
     </Form>
   )
