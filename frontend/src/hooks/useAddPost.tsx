@@ -1,12 +1,12 @@
 import { useState } from "react";
 import useAuth from "./useAuth";
-import { Post } from "@/pages/Explore";
+import { PostType } from "@/types/PostType";
 
 export default function useAddPost() {
   const [error, setError] = useState<string | null>(null);
   const { isAuth, token, user } = useAuth();
 
-  const createPost = async (newPost: Partial<Post>) => {
+  const createPost = async (newPost: Partial<PostType>) => {
     setError(null);
 
     if (isAuth && token && user) {

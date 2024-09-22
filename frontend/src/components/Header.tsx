@@ -1,11 +1,8 @@
 import { Home, Hash, Users, Settings } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
+import { HeaderPropsType } from "@/types/HeaderPropsType";
 
-interface HeaderProps {
-  title: string;
-}
-
-export default function Header({ title }: HeaderProps) {
+export default function Header({ title }: HeaderPropsType) {
   const { theme } = useTheme();
 
   const renderIcon = () => {

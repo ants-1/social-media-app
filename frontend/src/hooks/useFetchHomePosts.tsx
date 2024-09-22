@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import useAuth from "./useAuth";
-import { Post } from "@/pages/Explore";
+import { PostType } from "@/types/PostType";
 
 export function useFetchHomePosts() {
   const [error, setError] = useState<string | null>(null);
-  const [posts, setPosts] = useState<Post[] | null>(null);
+  const [posts, setPosts] = useState<PostType[] | null>(null);
   const { isAuth, user } = useAuth(); 
 
   const fetchPosts = async () => {

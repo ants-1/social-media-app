@@ -4,25 +4,6 @@ import PostCard from "@/components/PostCard";
 import Sidebar from "@/components/Sidebar";
 import { useFetchAllPosts } from "@/hooks/useFetchAllPosts";
 
-export interface Author {
-  _id: string;
-  username: string;
-  avatar?: string; 
-  imgUrl?: string;
-}
-
-export interface Post {
-  _id: string;
-  author: Author;
-  content: string;
-  imgUrl?: string; 
-  likes: number;
-  likedBy: string[];
-  dislikes: number;
-  comments: string[]; 
-  timestamp: string;
-}
-
 export default function Explore() {
   const { posts, error } = useFetchAllPosts();
 

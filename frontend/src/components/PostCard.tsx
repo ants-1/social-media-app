@@ -3,13 +3,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { ThumbsDown, ThumbsUp, MessageCircle } from "lucide-react";
-import { Post } from "@/pages/Explore";
+import { PostCardPropsType } from "@/types/PostCardPropsType";
 
-interface PostCardProps {
-  post: Post;
-}
-
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post }: PostCardPropsType) {
   const [likeCount, setLikeCount] = useState<number>(post.likes || 0);
   const [dislikeCount, setDislikeCount] = useState<number>(post.dislikes || 0);
   const [userLiked, setUserLiked] = useState<boolean>(false);
