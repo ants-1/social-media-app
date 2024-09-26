@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { ThumbsDown, ThumbsUp, MessageCircle } from "lucide-react";
 import { PostCardPropsType } from "@/types/PostCardPropsType";
+import { Link } from "react-router-dom";
 
 export default function PostCard({ post }: PostCardPropsType) {
   const [likeCount, setLikeCount] = useState<number>(post.likes || 0);
@@ -79,10 +80,12 @@ export default function PostCard({ post }: PostCardPropsType) {
             {dislikeCount}
           </Button>
         </div>
-        <Button variant="ghost" size="sm">
-          <MessageCircle className="w-4 h-4 mr-1" />
-          {post.comments.length}
-        </Button>
+        <Link to={`/post/${post._id}`}>
+          <Button variant="ghost" size="sm">
+            <MessageCircle className="w-4 h-4 mr-1" />
+            {post.comments.length}
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   );

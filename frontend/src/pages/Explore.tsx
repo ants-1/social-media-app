@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import PostCard from "@/components/PostCard";
 import Sidebar from "@/components/Sidebar";
 import { useFetchAllPosts } from "@/hooks/useFetchAllPosts";
+import ReactLoading from "react-loading";
 
 export default function Explore() {
   const { posts, error } = useFetchAllPosts();
@@ -27,7 +28,7 @@ export default function Explore() {
               <p>No posts available</p>
             )
           ) : (
-            <p>Loading...</p>
+            <ReactLoading type={"spin"} color="#000" />
           )}
         </div>
       </div>

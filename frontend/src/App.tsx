@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { ThemeProvider, useTheme } from "./components/ThemeProvider";
+import { PostProvider } from "./contexts/PostContext";
 import useAuth from "./hooks/useAuth";
 
 import Login from "./pages/Login";
@@ -15,16 +16,15 @@ function AppContent() {
 
   return (
     <div
-      className={`min-h-screen ${
-        theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-white text-gray-900"
-      } transition-colors duration-300`}
+      className={`min-h-screen ${theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-white text-gray-900"
+        } transition-colors duration-300`}
     >
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
-        <Route path="/post" element={<Post />} />
+        <Route path="/post/:postId" element={<Post />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
@@ -37,9 +37,11 @@ function App() {
   console.log(isAuth);
 
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      {isAuth ? <AppContent /> : <Login />}
-    </ThemeProvider>
+    <PostProvider>
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        {isAuth ? <AppContent /> : <Login />}
+      </ThemeProvider>
+    </PostProvider>
   );
 }
 
