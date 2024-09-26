@@ -11,13 +11,22 @@ const getAllComments = async (
   try {
     const { postId } = req.params;
 
-    const post = await Post.findById(postId).exec();
+    const post = await Post.findById(postId)
+      .populate({
+        path: "comments",
+        populate: {
+          path: "author",
+          select: "username imgUrl",
+        },
+      })
+      .populate("author", "username imgUrl")
+      .exec();
 
     if (!post) {
       return res.status(404).json({ error: "No post found" });
     }
 
-    const comments = await Comment.find().exec();
+    const comments = post.comments;
 
     if (!comments) {
       return res.status(404).json({ message: "No comments found" });

@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export default function CommentCard() {
+export default function CommentCard({ comment }) {
   const [likeCount, setLikeCount] = useState(15)
   const [dislikeCount, setDislikeCount] = useState(2)
   const [userLiked, setUserLiked] = useState(false)
@@ -47,13 +47,13 @@ export default function CommentCard() {
   return (
     <Card className="w-4/5 max-w-[32rem]">
       <CardHeader className="flex flex-row items-center gap-4">
-        <Avatar>
-          <AvatarImage src="/placeholder-avatar.jpg" alt="@commenter" />
-          <AvatarFallback>CM</AvatarFallback>
+      <Avatar>
+          <AvatarImage src={comment.author.imgUrl || "/placeholder-avatar.jpg"} alt={`@${comment.author.username}`} />
+          <AvatarFallback>{comment.author.username.slice(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
-          <p className="text-sm font-semibold">@commenter</p>
-          <p className="text-xs text-muted-foreground">Commented 2 hours ago</p>
+          <p className="text-sm font-semibold">@{comment.author.username}</p>
+          <p className="text-xs text-muted-foreground">{new Date(comment.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -69,7 +69,7 @@ export default function CommentCard() {
       </CardHeader>
       <CardContent>
         <p className="text-sm">
-          This is a great post! I really enjoyed reading about your experiences and insights. It's always refreshing to see such thoughtful content on social media.
+          {comment.text}
         </p>
       </CardContent>
       <CardFooter className="flex justify-between">

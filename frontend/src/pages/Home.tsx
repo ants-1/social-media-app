@@ -16,7 +16,7 @@ export default function Home() {
   }
 
   if (!user) {
-    return <div>Loading user information...</div>;
+    return <ReactLoading type={"spin"} color="#000" />;
   }
 
   return (

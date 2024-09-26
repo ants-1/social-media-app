@@ -8,11 +8,13 @@ import { useTheme } from "@/components/ThemeProvider";
 import { usePost } from "@/contexts/PostContext";
 import PostCard from "@/components/PostCard";
 import ReactLoading from "react-loading";
+import { useFetchAllComments } from "@/hooks/useFetchAllComments";
 
 export default function Post() {
   const { theme } = useTheme();
   const { postId } = useParams<{ postId: string }>();
   const { getPost, post, error } = usePost();
+  const { comments } = useFetchAllComments(postId);
 
   useEffect(() => {
     if (postId) {
@@ -36,14 +38,22 @@ export default function Post() {
           <PostCard post={post} />
         </div>
         <div className="flex flex-col items-center justify-center gap-4 h-full  border-b py-10">
-          <div className="flex flex-col items-center justify-center w-full pb-10 border-b">
+          <div className="flex flex-col items-center justify-center w-full -pt-10 pb-10 border-b">
             <CommentForm />
           </div>
           <h2 className="text-xl font-semibold py-5">Comments</h2>
-          <CommentCard />
-          <CommentCard />
-          <CommentCard />
-          <CommentCard />
+          {comments ? (
+            comments.length > 0 ? (
+              comments.map((comment) => (
+                <CommentCard key={comment._id} comment={comment} />
+              ))
+            ) : (
+              <p>No comments available</p>
+            )
+          ) : (
+            <ReactLoading type={"spin"} color="#000" />
+          )
+          }
         </div>
       </div>
       <Sidebar />

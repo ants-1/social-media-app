@@ -35,7 +35,7 @@ export function CommentForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-4/5 xl:w-3/5 space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-4/5 xl:w-3/5 space-y-6 max-w-[32rem]">
         <FormField
           control={form.control}
           name="comment"
