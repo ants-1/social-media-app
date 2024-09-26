@@ -35,8 +35,12 @@ export function useFetchAllComments(postId) {
   };
 
   useEffect(() => {
-      fetchComments();
-  }, [postId]);
+    fetchComments();
+  }, [postId, isAuth]);
 
-  return { comments, error };
+  const refreshComments = () => {
+    fetchComments();
+  };
+
+  return { comments, error, refreshComments };
 }

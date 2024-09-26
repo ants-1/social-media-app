@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export default function CommentCard({ comment }) {
-  const [likeCount, setLikeCount] = useState(15)
-  const [dislikeCount, setDislikeCount] = useState(2)
+  const [likeCount, setLikeCount] = useState(0)
+  const [dislikeCount, setDislikeCount] = useState(0)
   const [userLiked, setUserLiked] = useState(false)
   const [userDisliked, setUserDisliked] = useState(false)
 
@@ -48,11 +48,14 @@ export default function CommentCard({ comment }) {
     <Card className="w-4/5 max-w-[32rem]">
       <CardHeader className="flex flex-row items-center gap-4">
       <Avatar>
-          <AvatarImage src={comment.author.imgUrl || "/placeholder-avatar.jpg"} alt={`@${comment.author.username}`} />
-          <AvatarFallback>{comment.author.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+      <AvatarImage 
+            src={comment.author?.imgUrl || "/placeholder-avatar.jpg"} 
+            alt={`@${comment.author?.username || "Unknown User"}`} 
+          />
+          <AvatarFallback>{comment.author?.username.slice(0, 2).toUpperCase() || "UU"}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
-          <p className="text-sm font-semibold">@{comment.author.username}</p>
+          <p className="text-sm font-semibold">@{comment.author?.username}</p>
           <p className="text-xs text-muted-foreground">{new Date(comment.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
         </div>
         <DropdownMenu>

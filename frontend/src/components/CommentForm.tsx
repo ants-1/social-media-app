@@ -12,25 +12,41 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
+import useAddComment from "@/hooks/useAddComment"
+import { useFetchAllComments } from "@/hooks/useFetchAllComments"
+import useAuth from "@/hooks/useAuth"
 
 const FormSchema = z.object({
-  comment: z
+  text: z
     .string()
-    .min(1, {
-      message: "Post must be at least 10 characters.",
+    .min(2, {
+      message: "Comment must be at least 2 characters.",
     })
     .max(100, {
-      message: "Post must not be longer than 160 characters.",
+      message: "Comment must not be longer than 100 characters.",
     }),
 })
 
-export function CommentForm() {
+export function CommentForm({ postId }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data)
+  const { user } = useAuth();
+  const { createComment, error } = useAddComment();
+  const { refreshComments } = useFetchAllComments(postId);
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (!user) {
+      return;
+    }
+    const newComment = { author: user._id, text: data.text };
+    const createdComment = await createComment(newComment, postId);
+    
+    if (createdComment) {
+      refreshComments();
+      form.reset({ text: "" });
+    }
   }
 
   return (
@@ -38,7 +54,7 @@ export function CommentForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-4/5 xl:w-3/5 space-y-6 max-w-[32rem]">
         <FormField
           control={form.control}
-          name="comment"
+          name="text"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Create Comment</FormLabel>
@@ -54,6 +70,7 @@ export function CommentForm() {
           )}
         />
         <Button type="submit">Create</Button>
+        {error && <p className="text-red-500">{error}</p>}
       </form>
     </Form>
   )

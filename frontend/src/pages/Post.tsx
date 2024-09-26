@@ -39,7 +39,7 @@ export default function Post() {
         </div>
         <div className="flex flex-col items-center justify-center gap-4 h-full  border-b py-10">
           <div className="flex flex-col items-center justify-center w-full -pt-10 pb-10 border-b">
-            <CommentForm />
+            <CommentForm postId={postId} />
           </div>
           <h2 className="text-xl font-semibold py-5">Comments</h2>
           {comments ? (
