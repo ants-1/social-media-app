@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
+import useUpdateProfile from "@/hooks/useUpdateProfile"
+import useAuth from "@/hooks/useAuth"
+import { useFetchUserData } from "@/hooks/useFetchUserData"
 
 const FormSchema = z.object({
   name: z.string().min(3, {
@@ -25,19 +28,33 @@ const FormSchema = z.object({
   location: z.string(),
 })
 
-export default function ProfileForm() {
+export default function ProfileForm({ userData, setIsUpdating }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      description: "",
-      location: "",
+      name: userData?.user?.name,
+      email: userData?.user?.email,
+      description: userData?.user?.description,
+      location: userData?.user?.location,
     },
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data)
+  const { user } = useAuth();
+  const { updateProfile, error } = useUpdateProfile();
+  const { refreshUserData } = useFetchUserData(user._id);
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (!user) {
+      return;
+    }
+
+    const updatedProfile = await updateProfile(data, user?._id);
+    console.log(data);
+
+    if (updatedProfile) {
+      setIsUpdating(false);
+      await refreshUserData();
+    }
   }
 
   return (
@@ -95,6 +112,7 @@ export default function ProfileForm() {
             </FormItem>
           )}
         />
+        {error && <p className="text-red-500">{error}</p>}
         <Button type="submit">Submit</Button>
       </form>
     </Form>

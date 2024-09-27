@@ -19,16 +19,20 @@ import { AuthorType } from "@/types/AuthorType"
 import { CommentType } from "@/types/CommentType"
 import { PostType } from "@/types/PostType"
 import { useParams } from "react-router-dom"
+import useAuth from "@/hooks/useAuth"
 
 export default function Profile() {
   const [isUpdating, setIsUpdating] = useState(false);
-  const { userId } = useParams<{ userId: string}>();
+  const { userId } = useParams<{ userId: string }>();
   const { userData } = useFetchUserData(userId);
+  const { user } = useAuth();
 
   const userPosts: PostType[] = userData?.user?.posts || [];
   const userComments: CommentType[] = userData?.user?.comments || [];
   const userFriends: AuthorType[] = userData?.user?.friends || [];
   const userFriendRequests: AuthorType[] = userData?.user?.friendRequests || [];
+
+  const isOwnProfile = user?._id === userId;
 
   return (
     <div className="flex">
@@ -42,31 +46,36 @@ export default function Profile() {
           <AvatarFallback>{userData?.user?.username.slice(0, 2).toUpperCase() || "UN"}</AvatarFallback>
         </Avatar>
 
-        <div className="flex items-center gap-5 w-30 self-end relative right-[10%] -top-16">
-          <Button
-            variant={`${isUpdating ? "outline" : "default"}`}
-            onClick={() => setIsUpdating(!isUpdating)}
-          >
-            {isUpdating ? "Cancel" : "Update Profile"}
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="ml-auto h-8 w-8 p-0">
-                <MoreHorizontal className="h-4 w-4" />
-                <span className="sr-only">Open menu</span>
+        <div className={`flex items-center gap-5 w-30 self-end relative right-[10%] -top-16 ${isOwnProfile ? "mt-0" : "mt-10"}`}>
+          {isOwnProfile && (
+            <>
+              <Button
+                variant={`${isUpdating ? "outline" : "default"}`}
+                onClick={() => setIsUpdating(!isUpdating)}
+              >
+                {isUpdating ? "Cancel" : "Update Profile"}
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Change Banner</DropdownMenuItem>
-              <DropdownMenuItem>Change Avatar</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="ml-auto h-8 w-8 p-0">
+                    <MoreHorizontal className="h-4 w-4" />
+                    <span className="sr-only">Open menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+
+                  <DropdownMenuItem>Change Banner</DropdownMenuItem>
+                  <DropdownMenuItem>Change Avatar</DropdownMenuItem>
+
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
         </div>
 
         <div className="flex justify-around items-center -mt-10">
           {isUpdating ? (
-            <ProfileForm />
+            <ProfileForm userData={userData} setIsUpdating={setIsUpdating}/>
           ) : (
             <div>
               <h4>{userData?.user?.name}</h4>
@@ -81,7 +90,7 @@ export default function Profile() {
 
         {!isUpdating && (
           <div className="flex flex-col items-center  gap-4 h-full border-b p-10">
-            <ProfileTab posts={userPosts} comments={userComments} friends={userFriends} friendRequests={userFriendRequests}/>
+            <ProfileTab posts={userPosts} comments={userComments} friends={userFriends} friendRequests={userFriendRequests} />
           </div>
         )}
       </div>

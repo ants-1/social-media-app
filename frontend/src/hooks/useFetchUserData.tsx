@@ -43,5 +43,9 @@ export function useFetchUserData(userId: string) {
     fetchUserData();
   }, [isAuth, userId]);
 
-  return { userData, setUserData, error };
+  const refreshUserData = () => {
+    fetchUserData();
+  }
+
+  return { userData, setUserData, refreshUserData, error };
 }
