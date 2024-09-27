@@ -6,22 +6,18 @@ interface UserData {
   user?: AuthorType;
 }
 
-export function useFetchUserData() {
+export function useFetchUserData(userId: string) {
   const [error, setError] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
-  const { isAuth, user } = useAuth();
+  
+  const { isAuth } = useAuth();
 
   const fetchUserData = async () => {
     setError(null);
 
-    if (!user) {
-      console.log("user is null");
-      return;
-    }
-
-    if (isAuth && user?._id) {
+    if (isAuth && userId) {
       try {
-        const response = await fetch(`http://localhost:3000/users/${user._id}`, {
+        const response = await fetch(`http://localhost:3000/users/${userId}`, {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -45,7 +41,7 @@ export function useFetchUserData() {
 
   useEffect(() => {
     fetchUserData();
-  }, [isAuth, user]);
+  }, [isAuth, userId]);
 
   return { userData, setUserData, error };
 }

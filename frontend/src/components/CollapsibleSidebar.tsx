@@ -8,7 +8,7 @@ import useAuth from "@/hooks/useAuth"
 
 export default function CollapsibleSidebar() {
   const [isOpen, setIsOpen] = useState(true);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   function handleLogout() {
     logout();
@@ -45,7 +45,7 @@ export default function CollapsibleSidebar() {
                   {isOpen && <span>Explore</span>}
                 </Button>
               </Link>
-              <Link to="/profile">
+              <Link to={`/profile/${user?._id}`}>
                 <Button variant="ghost" className="justify-start h-12 w-full">
                   <Users className="mx-2 h-6 w-6" />
                   {isOpen && <span>Profile</span>}

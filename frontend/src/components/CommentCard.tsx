@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { CommentCardProps } from "@/types/CommentCardType"
+import { Link } from "react-router-dom"
 
 export default function CommentCard({ comment }: CommentCardProps) {
   const [likeCount, setLikeCount] = useState(0)
@@ -48,15 +49,19 @@ export default function CommentCard({ comment }: CommentCardProps) {
   return (
     <Card className="w-4/5 max-w-[32rem]">
       <CardHeader className="flex flex-row items-center gap-4">
-      <Avatar>
-      <AvatarImage 
-            src={comment.author?.avatarUrl || "/placeholder-avatar.jpg"} 
-            alt={`@${comment.author?.username || "Unknown User"}`} 
-          />
-          <AvatarFallback>{comment.author?.username.slice(0, 2).toUpperCase() || "UU"}</AvatarFallback>
-        </Avatar>
+        <Link to={`/profile/${comment.author?._id}`}>
+          <Avatar>
+            <AvatarImage
+              src={comment.author?.avatarUrl || "/placeholder-avatar.jpg"}
+              alt={`@${comment.author?.username || "Unknown User"}`}
+            />
+            <AvatarFallback>{comment.author?.username.slice(0, 2).toUpperCase() || "UU"}</AvatarFallback>
+          </Avatar>
+        </Link>
         <div className="flex flex-col">
-          <p className="text-sm font-semibold">@{comment.author?.username}</p>
+          <Link to={`/profile/${comment.author?._id}`}>
+            <p className="text-sm font-semibold">@{comment.author?.username}</p>
+          </Link>
           <p className="text-xs text-muted-foreground">{new Date(comment.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
         </div>
         <DropdownMenu>

@@ -25,7 +25,7 @@ function AppContent() {
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/post/:postId" element={<Post />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/:userId" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </div>

@@ -43,12 +43,16 @@ export default function PostCard({ post }: PostCardPropsType) {
   return (
     <Card className="w-4/5 max-w-[32rem] space-y-2">
       <CardHeader className="flex flex-row items-center gap-4">
-        <Avatar>
-          <AvatarImage src={post.author.avatarUrl || "/placeholder-avatar.jpg"} alt={`@${post.author.username}`} />
-          <AvatarFallback>{post.author.username.slice(0, 2).toUpperCase()}</AvatarFallback>
-        </Avatar>
+        <Link to={`/profile/${post.author._id}`}>
+          <Avatar>
+            <AvatarImage src={post.author.avatarUrl || "/placeholder-avatar.jpg"} alt={`@${post.author.username}`} />
+            <AvatarFallback>{post.author.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+          </Avatar>
+        </Link>
         <div className="flex flex-col">
-          <p className="text-sm font-semibold">@{post.author.username}</p>
+          <Link to={`/profile/${post.author._id}`}>
+            <p className="text-sm font-semibold">@{post.author.username}</p>
+          </Link>
           <p className="text-xs text-muted-foreground">
             {new Date(post.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>

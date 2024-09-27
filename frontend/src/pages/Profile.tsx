@@ -18,10 +18,12 @@ import { useFetchUserData } from "@/hooks/useFetchUserData"
 import { AuthorType } from "@/types/AuthorType"
 import { CommentType } from "@/types/CommentType"
 import { PostType } from "@/types/PostType"
+import { useParams } from "react-router-dom"
 
 export default function Profile() {
   const [isUpdating, setIsUpdating] = useState(false);
-  const { userData } = useFetchUserData();
+  const { userId } = useParams<{ userId: string}>();
+  const { userData } = useFetchUserData(userId);
 
   const userPosts: PostType[] = userData?.user?.posts || [];
   const userComments: CommentType[] = userData?.user?.comments || [];
