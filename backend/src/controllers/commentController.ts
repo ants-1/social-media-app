@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Post from "../models/post";
 import Comment from "../models/comment";
+import User from "../models/user";
 
 // GET posts/:postId/comments
 const getAllComments = async (
@@ -38,7 +39,7 @@ const getAllComments = async (
   }
 };
 
-// POST /posts/:postId/comments
+// POST /posts/:postId/users/:userId/comments
 const createComment = async (
   req: Request,
   res: Response,
@@ -58,13 +59,21 @@ const createComment = async (
       text: req.body.text,
     });
 
+    const user = await User.findById(newComment.author);
+
+    if (!user) {
+      return res.status(404).json({ error: " User not found"});
+    }
+
     if (!newComment) {
       return res.status(404).json({ error: "Unable to create comment" });
     }
 
     post.comments.push(newComment._id);
+    user.comments.push(newComment._id);
     await newComment.save();
     await post.save();
+    await user.save();
 
     return res.status(200).json(newComment);
   } catch (err) {

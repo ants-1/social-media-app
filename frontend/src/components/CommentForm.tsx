@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea"
 import useAddComment from "@/hooks/useAddComment"
 import { useFetchAllComments } from "@/hooks/useFetchAllComments"
 import useAuth from "@/hooks/useAuth"
+import { CommentFormProps } from "@/types/CommentFormProps"
 
 const FormSchema = z.object({
   text: z
@@ -27,7 +28,7 @@ const FormSchema = z.object({
     }),
 })
 
-export function CommentForm({ postId }) {
+export function CommentForm({ postId }: CommentFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })

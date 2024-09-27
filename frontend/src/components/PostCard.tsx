@@ -44,7 +44,7 @@ export default function PostCard({ post }: PostCardPropsType) {
     <Card className="w-4/5 max-w-[32rem] space-y-2">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar>
-          <AvatarImage src={post.author.imgUrl || "/placeholder-avatar.jpg"} alt={`@${post.author.username}`} />
+          <AvatarImage src={post.author.avatarUrl || "/placeholder-avatar.jpg"} alt={`@${post.author.username}`} />
           <AvatarFallback>{post.author.username.slice(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">

@@ -14,20 +14,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
+import { useFetchUserData } from "@/hooks/useFetchUserData"
+import { AuthorType } from "@/types/AuthorType"
+import { CommentType } from "@/types/CommentType"
+import { PostType } from "@/types/PostType"
 
 export default function Profile() {
   const [isUpdating, setIsUpdating] = useState(false);
+  const { userData } = useFetchUserData();
+
+  const userPosts: PostType[] = userData?.user?.posts || [];
+  const userComments: CommentType[] = userData?.user?.comments || [];
+  const userFriends: AuthorType[] = userData?.user?.friends || [];
+  const userFriendRequests: AuthorType[] = userData?.user?.friendRequests || [];
 
   return (
     <div className="flex">
       <CollapsibleSidebar />
       <div className="flex flex-col w-full">
         <Header title="Profile" />
-        <div className="flex items-end justify-end h-60 py-6 px-6 border-b bg-gray-600"></div>
+        <div className="flex items-end justify-end min-h-60 max-h-60 py-6 px-6 border-b bg-gray-600"></div>
 
         <Avatar className="w-36 h-36 bg-gray-400 rounded-full relative -mt-20 left-[10%] mb-4">
           <AvatarImage src="/placeholder-avatar.jpg" alt="@username" />
-          <AvatarFallback>UN</AvatarFallback>
+          <AvatarFallback>{userData?.user?.username.slice(0, 2).toUpperCase() || "UN"}</AvatarFallback>
         </Avatar>
 
         <div className="flex items-center gap-5 w-30 self-end relative right-[10%] -top-16">
@@ -57,20 +67,19 @@ export default function Profile() {
             <ProfileForm />
           ) : (
             <div>
-              <h4>Name</h4>
-              <h3 className="text-xl font-semibold">@Username</h3>
-              <p className="text-sm">New user!</p>
-              <p className="py-4 text-sm">Friends: 3</p>
+              <h4>{userData?.user?.name}</h4>
+              <h3 className="text-xl font-semibold">@{userData?.user?.username}</h3>
+              <p className="text-sm">{userData?.user?.description || "No Bio 😢"}</p>
+              <p className="py-4 text-sm">Friends: {userData?.user?.friends?.length || "0"}</p>
               <Button variant="outline">Send Request</Button>
             </div>
           )}
-          {/* Add button for chat feature that might be added later */}
           <p></p>
         </div>
 
         {!isUpdating && (
-          <div className="flex flex-col items-center justify-center gap-4 h-full border-b pb-10">
-            <ProfileTab />
+          <div className="flex flex-col items-center  gap-4 h-full border-b p-10">
+            <ProfileTab posts={userPosts} comments={userComments} friends={userFriends} friendRequests={userFriendRequests}/>
           </div>
         )}
       </div>

@@ -9,6 +9,7 @@ import { usePost } from "@/contexts/PostContext";
 import PostCard from "@/components/PostCard";
 import ReactLoading from "react-loading";
 import { useFetchAllComments } from "@/hooks/useFetchAllComments";
+import { CommentType } from "@/types/CommentType";
 
 export default function Post() {
   const { theme } = useTheme();
@@ -39,12 +40,12 @@ export default function Post() {
         </div>
         <div className="flex flex-col items-center justify-center gap-4 h-full  border-b py-10">
           <div className="flex flex-col items-center justify-center w-full -pt-10 pb-10 border-b">
-            <CommentForm postId={postId} />
+          {postId ? <CommentForm postId={postId} /> : <p>No post ID available</p>}
           </div>
           <h2 className="text-xl font-semibold py-5">Comments</h2>
-          {comments ? (
+          {comments? (
             comments.length > 0 ? (
-              comments.map((comment) => (
+              comments.map((comment: CommentType) => (
                 <CommentCard key={comment._id} comment={comment} />
               ))
             ) : (

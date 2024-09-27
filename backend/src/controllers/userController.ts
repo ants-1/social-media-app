@@ -29,7 +29,25 @@ const getUserById = async (
 ): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id).exec();
+    const user = await User.findById(id)
+      .populate("friends", "username name")
+      .populate({
+        path: "posts",
+        populate: {
+          path: "author",
+          select: "username name email",
+        },
+      })
+      .populate({
+        path: "comments",
+        populate: {
+          path: "author",
+          select: "username",
+        },
+      })
+      .populate("friendRequests", "username name")
+      .select("-password")
+      .exec();
 
     if (!user) {
       return res.status(404).json({ message: `User with id: ${id} not found` });

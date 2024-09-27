@@ -9,8 +9,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { CommentCardProps } from "@/types/CommentCardType"
 
-export default function CommentCard({ comment }) {
+export default function CommentCard({ comment }: CommentCardProps) {
   const [likeCount, setLikeCount] = useState(0)
   const [dislikeCount, setDislikeCount] = useState(0)
   const [userLiked, setUserLiked] = useState(false)
@@ -49,7 +50,7 @@ export default function CommentCard({ comment }) {
       <CardHeader className="flex flex-row items-center gap-4">
       <Avatar>
       <AvatarImage 
-            src={comment.author?.imgUrl || "/placeholder-avatar.jpg"} 
+            src={comment.author?.avatarUrl || "/placeholder-avatar.jpg"} 
             alt={`@${comment.author?.username || "Unknown User"}`} 
           />
           <AvatarFallback>{comment.author?.username.slice(0, 2).toUpperCase() || "UU"}</AvatarFallback>

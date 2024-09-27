@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
 
-export function useFetchAllComments(postId) {
+export function useFetchAllComments(postId: string) {
   const [error, setError] = useState<string | null>(null);
   const [comments, setComments] = useState(null);
   const { isAuth } = useAuth();
