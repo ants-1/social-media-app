@@ -20,6 +20,7 @@ import { CommentType } from "@/types/CommentType"
 import { PostType } from "@/types/PostType"
 import { useParams } from "react-router-dom"
 import useAuth from "@/hooks/useAuth"
+import useSendFriendRequest from "@/hooks/useSendFriendRequest"
 
 export default function Profile() {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -33,6 +34,15 @@ export default function Profile() {
   const userFriendRequests: AuthorType[] = userData?.user?.friendRequests || [];
 
   const isOwnProfile = user?._id === userId;
+  const isFriend = userFriends.some((friend) => friend._id === user?._id);
+  const hasFriendRequest = userFriendRequests.some((friendRequest) => friendRequest._id === user?._id);
+
+  const { sendFriendRequest } = useSendFriendRequest();
+
+  function handleSendFriendRequest() {
+    sendFriendRequest(user?._id, userId);
+    window.location.reload();
+  }
 
   return (
     <div className="flex">
@@ -75,14 +85,16 @@ export default function Profile() {
 
         <div className="flex justify-around items-center -mt-10">
           {isUpdating ? (
-            <ProfileForm userData={userData} setIsUpdating={setIsUpdating}/>
+            <ProfileForm userData={userData} setIsUpdating={setIsUpdating} />
           ) : (
             <div>
               <h4>{userData?.user?.name}</h4>
               <h3 className="text-xl font-semibold">@{userData?.user?.username}</h3>
               <p className="text-sm">{userData?.user?.description || "No Bio 😢"}</p>
               <p className="py-4 text-sm">Friends: {userData?.user?.friends?.length || "0"}</p>
-              <Button variant="outline">Send Request</Button>
+              {!isOwnProfile && !hasFriendRequest && !isFriend &&
+                <Button variant="outline" onClick={handleSendFriendRequest}>Send Request</Button>
+              }
             </div>
           )}
           <p></p>

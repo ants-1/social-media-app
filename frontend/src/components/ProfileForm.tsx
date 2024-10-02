@@ -52,8 +52,8 @@ export default function ProfileForm({ userData, setIsUpdating }) {
     console.log(data);
 
     if (updatedProfile) {
+      refreshUserData();
       setIsUpdating(false);
-      await refreshUserData();
     }
   }
 

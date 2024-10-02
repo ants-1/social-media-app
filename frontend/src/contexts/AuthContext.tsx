@@ -1,18 +1,13 @@
 import { createContext, useState, useEffect, Dispatch, SetStateAction, ReactNode } from "react";
-
-
-interface User {
-  _id: string;
-  username: string;
-}
+import { AuthorType } from "@/types/AuthorType";
 
 interface AuthContextType {
   token: string | null;
-  user: User | null;
+  user: AuthorType | null;
   isAuth: boolean;
   tokenExpiration: number | null;
   setToken: Dispatch<SetStateAction<string | null>>;
-  setUser: Dispatch<SetStateAction<User | null>>;
+  setUser: Dispatch<SetStateAction<AuthorType | null>>;
   setIsAuth: Dispatch<SetStateAction<boolean>>;
   logout: () => void;
 }
@@ -34,7 +29,7 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthorType | null>(null);
   const [isAuth, setIsAuth] = useState<boolean>(false);
   const [tokenExpiration, setTokenExpiration] = useState<number | null>(null);
 
