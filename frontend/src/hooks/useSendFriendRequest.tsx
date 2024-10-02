@@ -28,7 +28,7 @@ export default function useSendFriendRequest() {
                 return data;
             }
         } catch (error) {
-            setError(`Failed to send friends request" ${error}`);
+            setError(`Failed to send friends request ${error}`);
         }
     }
 

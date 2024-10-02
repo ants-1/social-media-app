@@ -1,22 +1,32 @@
-import PostCard from "./PostCard"
+import PostCard from "./PostCard";
 import ReactLoading from "react-loading";
-import CommentCard from "./CommentCard"
+import CommentCard from "./CommentCard";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "./ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "./ui/button";
 
 import { PostType } from "@/types/PostType";
 import { ProfileTabProps } from "@/types/ProfileTabProps";
 import useAuth from "@/hooks/useAuth";
 import { useParams } from "react-router-dom";
+import useAcceptFriendRequest from "@/hooks/useAcceptFriendRequest";
 
-export default function ProfileTab({ posts, comments, friends, friendRequests }: ProfileTabProps) {
-
+export default function ProfileTab({
+  posts,
+  comments,
+  friends,
+  friendRequests,
+}: ProfileTabProps) {
   const { userId } = useParams<{ userId: string }>();
   const { user } = useAuth();
   const isOwnProfile = user?._id === userId;
+  const { acceptFriendRequest } = useAcceptFriendRequest();
+
+  function handleAcceptFriendRequest(receiverId: string, senderId: string) {
+    acceptFriendRequest(receiverId, senderId);
+  }
 
   return (
     <Tabs defaultValue="posts" className="w-4/5 xl:w-3/5 mx-auto">
@@ -26,12 +36,11 @@ export default function ProfileTab({ posts, comments, friends, friendRequests }:
         <TabsTrigger value="friends">Friends</TabsTrigger>
       </TabsList>
 
+      {/* Posts Tab */}
       <TabsContent value="posts" className="space-y-4 flex flex-col items-center">
         {posts ? (
           posts.length > 0 ? (
-            posts.map((post: PostType) => (
-              <PostCard key={post._id} post={post} />
-            ))
+            posts.map((post: PostType) => <PostCard key={post._id} post={post} />)
           ) : (
             <p>No posts available</p>
           )
@@ -40,12 +49,11 @@ export default function ProfileTab({ posts, comments, friends, friendRequests }:
         )}
       </TabsContent>
 
+      {/* Comments Tab */}
       <TabsContent value="comments" className="space-y-4 flex flex-col items-center">
         {comments ? (
           comments.length > 0 ? (
-            comments.map((comment) => (
-              <CommentCard key={comment._id} comment={comment} />
-            ))
+            comments.map((comment) => <CommentCard key={comment._id} comment={comment} />)
           ) : (
             <p className="mt-10">No comments available</p>
           )
@@ -54,8 +62,9 @@ export default function ProfileTab({ posts, comments, friends, friendRequests }:
         )}
       </TabsContent>
 
+      {/* Friends Tab */}
       <TabsContent value="friends" className="flex flex-col items-center space-y-4">
-        {isOwnProfile &&
+        {isOwnProfile && (
           <>
             <h3 className="mb-2 text-lg font-semibold">
               Friend Requests ({friendRequests ? friendRequests.length : 0})
@@ -79,7 +88,7 @@ export default function ProfileTab({ posts, comments, friends, friendRequests }:
                             </div>
                           </div>
                           <div className="flex gap-2">
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="sm" onClick={() => handleAcceptFriendRequest(userId, user._id)}>
                               Accept
                             </Button>
                             <Button variant="destructive" size="sm">
@@ -98,7 +107,8 @@ export default function ProfileTab({ posts, comments, friends, friendRequests }:
               <ReactLoading className="mt-10" type={"spin"} color="#000" />
             )}
           </>
-        }
+        )}
+
         <h3 className="mb-2 text-lg font-semibold">Friends ({friends ? friends.length : 0})</h3>
 
         {friends ? (
@@ -118,11 +128,11 @@ export default function ProfileTab({ posts, comments, friends, friendRequests }:
                           <p className="text-xs text-muted-foreground">@{user.username}</p>
                         </div>
                       </div>
-                      {isOwnProfile &&
+                      {isOwnProfile && (
                         <Button variant="destructive" size="sm">
                           Remove Friend
                         </Button>
-                      }
+                      )}
                     </li>
                   ))}
                 </ul>

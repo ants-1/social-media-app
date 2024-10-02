@@ -95,6 +95,9 @@ export default function Profile() {
               {!isOwnProfile && !hasFriendRequest && !isFriend &&
                 <Button variant="outline" onClick={handleSendFriendRequest}>Send Request</Button>
               }
+              {isFriend &&
+                <Button variant="outline">Remove Friend</Button>
+              }
             </div>
           )}
           <p></p>
