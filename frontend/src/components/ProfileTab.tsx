@@ -13,6 +13,7 @@ import useAuth from "@/hooks/useAuth";
 import { useParams } from "react-router-dom";
 import useAcceptFriendRequest from "@/hooks/useAcceptFriendRequest";
 import useDeleteFriendRequest from "@/hooks/useDeleteFriendRequest";
+import useDeleteFriend from "@/hooks/useDeleteFriend";
 
 export default function ProfileTab({
   posts,
@@ -25,6 +26,7 @@ export default function ProfileTab({
   const isOwnProfile = user?._id === userId;
   const { acceptFriendRequest } = useAcceptFriendRequest();
   const { deleteFriendRequest } = useDeleteFriendRequest();
+  const { deleteFriend } = useDeleteFriend();
 
   function handleAcceptFriendRequest(receiverId: string, senderId: string) {
     acceptFriendRequest(receiverId, senderId);
@@ -33,6 +35,11 @@ export default function ProfileTab({
 
   function handleDeleteFriendRequest(receiverId: string, senderId: string) {
     deleteFriendRequest(receiverId, senderId);
+    window.location.reload();
+  }
+
+  function handleDeleteFriend(usersId: string, removedFriendId: string) {
+    deleteFriend(usersId, removedFriendId);
     window.location.reload();
   }
 
@@ -137,7 +144,7 @@ export default function ProfileTab({
                         </div>
                       </div>
                       {isOwnProfile && (
-                        <Button variant="destructive" size="sm">
+                        <Button variant="destructive" size="sm" onClick={() => handleDeleteFriend(userId, user._id)}>
                           Remove Friend
                         </Button>
                       )}

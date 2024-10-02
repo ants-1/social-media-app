@@ -7,7 +7,7 @@ export default function useDeleteFriendRequest() {
     setError(null);
 
     if (!senderId || !receiverId) {
-      setError("Invalid ID used");
+      setError("Invalid ID");
       return null;
     }
 
