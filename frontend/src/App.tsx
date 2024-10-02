@@ -20,8 +20,11 @@ function AppContent() {
         } transition-colors duration-300`}
     >
       <Routes>
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/sign-up" element={<SignUp />} />
+
+        {/* Private Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/post/:postId" element={<Post />} />
@@ -34,12 +37,21 @@ function AppContent() {
 
 function App() {
   const { isAuth } = useAuth();
-  console.log(isAuth);
 
   return (
     <PostProvider>
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        {isAuth ? <AppContent /> : <Login />}
+        <Routes>
+          {isAuth ? (
+            <Route path="*" element={<AppContent />} />
+          ) : (
+            <>
+              <Route path="/login" element={<Login />} />
+              <Route path="/sign-up" element={<SignUp />} />
+              <Route path="*" element={<Login />} />
+            </>
+          )}
+        </Routes>
       </ThemeProvider>
     </PostProvider>
   );

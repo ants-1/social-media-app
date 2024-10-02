@@ -12,6 +12,7 @@ import { ProfileTabProps } from "@/types/ProfileTabProps";
 import useAuth from "@/hooks/useAuth";
 import { useParams } from "react-router-dom";
 import useAcceptFriendRequest from "@/hooks/useAcceptFriendRequest";
+import useDeleteFriendRequest from "@/hooks/useDeleteFriendRequest";
 
 export default function ProfileTab({
   posts,
@@ -23,9 +24,16 @@ export default function ProfileTab({
   const { user } = useAuth();
   const isOwnProfile = user?._id === userId;
   const { acceptFriendRequest } = useAcceptFriendRequest();
+  const { deleteFriendRequest } = useDeleteFriendRequest();
 
   function handleAcceptFriendRequest(receiverId: string, senderId: string) {
     acceptFriendRequest(receiverId, senderId);
+    window.location.reload();
+  }
+
+  function handleDeleteFriendRequest(receiverId: string, senderId: string) {
+    deleteFriendRequest(receiverId, senderId);
+    window.location.reload();
   }
 
   return (
@@ -91,7 +99,7 @@ export default function ProfileTab({
                             <Button variant="outline" size="sm" onClick={() => handleAcceptFriendRequest(userId, user._id)}>
                               Accept
                             </Button>
-                            <Button variant="destructive" size="sm">
+                            <Button variant="destructive" size="sm" onClick={() => handleDeleteFriendRequest(userId, user._id)}>
                               Decline
                             </Button>
                           </div>
