@@ -27,7 +27,13 @@ async function main() {
   console.log("MongoDB connected");
 }
 
-app.use(cors());
+const corsOptions = {
+  origin: process.env.CLIENT_URL, 
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", 
+  credentials: true, 
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(
   session({
@@ -45,7 +51,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/auth", authRoutes);
 app.use("/", userRoutes);
 app.use("/", postRoutes);
-app.use("/",commentRoutes);
+app.use("/", commentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port: http://localhost:${PORT}/`);

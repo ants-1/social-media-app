@@ -54,6 +54,7 @@ export default function ProfileForm({ userData, setIsUpdating }) {
     if (updatedProfile) {
       refreshUserData();
       setIsUpdating(false);
+      window.location.reload();
     }
   }
 

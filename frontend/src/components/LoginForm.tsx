@@ -2,8 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useAuth from "@/hooks/useAuth";
+import { FaGoogle } from "react-icons/fa";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -66,6 +67,27 @@ export function LoginForm() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    // Redirect user to the Google OAuth route on the back-end
+    window.location.href = "http://localhost:3000/auth/google";
+  };
+  
+  // Create a new effect to check for the token after redirection
+  useEffect(() => {
+    const fetchTokenFromUrl = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("token");
+  
+      if (token) {
+        setToken(token); // Store the token in context
+        navigate("/"); // Redirect to home after successful login
+      }
+    };
+  
+    fetchTokenFromUrl();
+  }, [navigate, setToken]);
+  
+
   return (
     <Form {...form}>
       <form
@@ -115,7 +137,11 @@ export function LoginForm() {
             </Button>
           </Link>
         </div>
+        <Button type="button" variant="destructive" className="w-full" onClick={handleGoogleLogin}>
+           <FaGoogle /> <span className="ml-2">Google </span>
+        </Button>
       </form>
     </Form>
   );
 }
+

@@ -59,8 +59,37 @@ const logout = async (
   });
 };
 
+const googleCallback = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  passport.authenticate(
+    "google",
+    { session: false },
+    async (err: Error, user: IUser) => {
+      if (err || !user) {
+        return res.status(400).json({ error: "Google authentication failed" });
+      }
+
+      try {
+        // Generate a token for the authenticated user
+        const token = generateToken(user);
+        
+        // Redirect to the frontend with the token
+        return res.redirect(`${process.env.CLIENT_URL}/login?token=${token}`);
+      } catch (err) {
+        return next(err);
+      }
+    }
+  )(req, res, next);
+};
+
+
+
 export default {
   sign_up,
   login,
   logout,
+  googleCallback,
 };
