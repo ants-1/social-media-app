@@ -73,10 +73,8 @@ const googleCallback = async (
       }
 
       try {
-        // Generate a token for the authenticated user
         const token = generateToken(user);
         
-        // Redirect to the frontend with the token
         return res.redirect(`${process.env.CLIENT_URL}/login?token=${token}`);
       } catch (err) {
         return next(err);

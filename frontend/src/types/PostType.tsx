@@ -8,6 +8,7 @@ export interface PostType {
     likes: number;
     likedBy: string[];
     dislikes: number;
+    dislikedBy: string[];
     comments: string[]; 
     timestamp: string;
   }

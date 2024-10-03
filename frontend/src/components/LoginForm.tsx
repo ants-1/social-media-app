@@ -68,25 +68,23 @@ export function LoginForm() {
   };
 
   const handleGoogleLogin = async () => {
-    // Redirect user to the Google OAuth route on the back-end
     window.location.href = "http://localhost:3000/auth/google";
   };
-  
-  // Create a new effect to check for the token after redirection
+
   useEffect(() => {
     const fetchTokenFromUrl = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get("token");
-  
+
       if (token) {
-        setToken(token); // Store the token in context
-        navigate("/"); // Redirect to home after successful login
+        setToken(token); 
+        navigate("/"); 
       }
     };
-  
+
     fetchTokenFromUrl();
   }, [navigate, setToken]);
-  
+
 
   return (
     <Form {...form}>
@@ -137,9 +135,10 @@ export function LoginForm() {
             </Button>
           </Link>
         </div>
-        <Button type="button" variant="destructive" className="w-full" onClick={handleGoogleLogin}>
-           <FaGoogle /> <span className="ml-2">Google </span>
-        </Button>
+          <Button type="button" variant="destructive" className="w-full" onClick={handleGoogleLogin}>
+            <FaGoogle /> <span className="ml-2">Google </span>
+          </Button>
+       
       </form>
     </Form>
   );

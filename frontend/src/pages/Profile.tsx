@@ -44,6 +44,8 @@ export default function Profile() {
     window.location.reload();
   }
 
+  console.log(userData);
+
   return (
     <div className="flex">
       <CollapsibleSidebar />
@@ -52,7 +54,7 @@ export default function Profile() {
         <div className="flex items-end justify-end min-h-60 max-h-60 py-6 px-6 border-b bg-gray-600"></div>
 
         <Avatar className="w-36 h-36 bg-gray-400 rounded-full relative -mt-20 left-[10%] mb-4">
-          <AvatarImage src="/placeholder-avatar.jpg" alt="@username" />
+          <AvatarImage src={userData?.user?.avatarUrl || "/placeholder-avatar.jpg"} alt="@username" />
           <AvatarFallback>{userData?.user?.username.slice(0, 2).toUpperCase() || "UN"}</AvatarFallback>
         </Avatar>
 

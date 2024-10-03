@@ -1,44 +1,89 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { ThumbsDown, ThumbsUp, MessageCircle } from "lucide-react";
 import { PostCardPropsType } from "@/types/PostCardPropsType";
 import { Link } from "react-router-dom";
+import useAuth from "@/hooks/useAuth";
 
 export default function PostCard({ post }: PostCardPropsType) {
   const [likeCount, setLikeCount] = useState<number>(post.likes || 0);
   const [dislikeCount, setDislikeCount] = useState<number>(post.dislikes || 0);
   const [userLiked, setUserLiked] = useState<boolean>(false);
   const [userDisliked, setUserDisliked] = useState<boolean>(false);
+  const [isAuthor, setIsAuthor] = useState<boolean>(false); 
 
-  const handleLike = () => {
-    if (userLiked) {
-      setLikeCount(likeCount - 1);
-      setUserLiked(false);
-    } else {
-      setLikeCount(likeCount + 1);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user && post.likedBy.includes(user._id)) {
       setUserLiked(true);
-      if (userDisliked) {
-        setDislikeCount(dislikeCount - 1);
-        setUserDisliked(false);
-      }
     }
-  };
-
-  const handleDislike = () => {
-    if (userDisliked) {
-      setDislikeCount(dislikeCount - 1);
-      setUserDisliked(false);
-    } else {
-      setDislikeCount(dislikeCount + 1);
+    if (user && post.dislikedBy.includes(user._id)) {
       setUserDisliked(true);
-      if (userLiked) {
-        setLikeCount(likeCount - 1);
-        setUserLiked(false);
+    }
+    if (user && post.author._id === user._id) {
+      setIsAuthor(true); 
+    }
+  }, [user, post.likedBy, post.dislikedBy, post.author._id]);
+
+  const handleLike = async () => {
+    if (isAuthor) return;
+  
+    try {
+      const response = await fetch(`http://localhost:3000/posts/${post._id}/users/${user?._id}/likes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setLikeCount(data.likes);
+        setDislikeCount(data.dislikes);
+        setUserLiked(!userLiked);
+        if (userDisliked) {
+          setUserDisliked(false);
+        }
+      } else {
+        console.error("Failed to like the post", data.error);
       }
+    } catch (error) {
+      console.error("Error liking the post", error);
     }
   };
+  
+  const handleDislike = async () => {
+    if (isAuthor) return; 
+  
+    try {
+      const response = await fetch(`http://localhost:3000/posts/${post._id}/users/${user?._id}/dislikes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setDislikeCount(data.dislikes);
+        setLikeCount(data.likes);
+        setUserDisliked(!userDisliked);
+        if (userLiked) {
+          setUserLiked(false);
+        }
+      } else {
+        console.error("Failed to dislike the post", data.error);
+      }
+    } catch (error) {
+      console.error("Error disliking the post", error);
+    }
+  };
+  
 
   return (
     <Card className="w-4/5 max-w-[32rem] space-y-2">
@@ -70,6 +115,7 @@ export default function PostCard({ post }: PostCardPropsType) {
             size="sm"
             className={`${userLiked ? "bg-green-600 hover:bg-green-700" : "text-green-600"}`}
             onClick={handleLike}
+            disabled={isAuthor}
           >
             <ThumbsUp className="w-4 h-4 mr-1" />
             {likeCount}
@@ -79,6 +125,7 @@ export default function PostCard({ post }: PostCardPropsType) {
             size="sm"
             className={`${userDisliked ? "bg-red-600 hover:bg-red-700" : "text-red-600"}`}
             onClick={handleDislike}
+            disabled={isAuthor} 
           >
             <ThumbsDown className="w-4 h-4 mr-1" />
             {dislikeCount}

@@ -44,5 +44,9 @@ export function useFetchAllPosts() {
     fetchPosts();
   });
 
-  return { posts, setPosts, error };
+  const refreshPost = async () => {
+    fetchPosts();
+  }
+
+  return { posts, setPosts, refreshPost, error };
 };

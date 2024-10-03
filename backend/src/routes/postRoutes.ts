@@ -19,6 +19,6 @@ router.post("/posts/:postId/users/:userId/likes", postController.likePost);
 
 router.get("/posts/:id/likes", postController.getPostLikedBy);
 
-router.post("/posts/:id/dislikes", postController.dislikePost);
+router.post("/posts/:postId/users/:userId/dislikes", postController.dislikePost);
 
 export default router;

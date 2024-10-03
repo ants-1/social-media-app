@@ -8,6 +8,7 @@ export interface IPost {
   likes: Number;
   likedBy: Types.ObjectId[],
   dislikes: Number,
+  dislikedBy: Types.ObjectId[],
   comments: Types.ObjectId[],
   timestamp: Date,
 }
@@ -21,6 +22,7 @@ const PostSchema = new Schema<IPost, PostModel>({
   likes: { type: Number, default: 0 },
   likedBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
   dislikes: { type: Number, default: 0 },
+  dislikedBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   timestamp: { type: Date, default: Date.now },
 });
