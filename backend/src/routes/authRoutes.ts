@@ -9,6 +9,8 @@ router.post("/sign-up", authController.sign_up);
 
 router.post("/login", authController.login);
 
+router.get("/guest", authController.guest_login);
+
 router.get("/logout", authController.logout);
 
 router.get("/user-token", verifyToken);

@@ -12,50 +12,46 @@ export function useFetchAllUsers() {
 
     if (isAuth) {
       try {
-        const response = await fetch('http://localhost:3000/users',
-          {
-            method: "GET",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await fetch('http://localhost:3000/users', {
+          method: "GET",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
         const data = await response.json();
 
         if (!response.ok) {
-          setUsers(null);
+          setUsers([]); 
           setError(data.error);
         } else {
           setUsers(data);
         }
       } catch (error) {
         setError(`Failed to fetch users: ${error}`);
+        setUsers([]);
       }
     }
   };
 
   const getSuggestedUsers = (currentUser: AuthorType) => {
-    if (users && currentUser) {
-      const currentFriendIds = currentUser.friends?.map(friend => friend._id) || [];
-      const currentFriendRequestIds = currentUser.friendRequests?.map(request => request._id) || [];
+    if (!users || !currentUser) return [];
 
-      const suggestedUsers = users?.users?.filter(user => {
-        const isFriend = currentFriendIds.includes(user._id);
-        const hasFriendRequest = currentFriendRequestIds.includes(user._id);
-        return !isFriend && !hasFriendRequest && user._id !== currentUser._id;
-      });
+    const currentFriendIds = currentUser.friends?.map(friend => friend._id) || [];
+    const currentFriendRequestIds = currentUser.friendRequests?.map(request => request._id) || [];
 
-      return suggestedUsers.slice(0, 3); 
-    }
+    const suggestedUsers = users?.users?.filter(user => {
+      const isFriend = currentFriendIds.includes(user._id);
+      const hasFriendRequest = currentFriendRequestIds.includes(user._id);
+      return !isFriend && !hasFriendRequest && user._id !== currentUser._id;
+    });
 
-    return [];
+    return suggestedUsers?.slice(0, 3) || [];  // Always return an empty array if undefined
   };
-
 
   useEffect(() => {
     fetchUsers();
   }, [isAuth]);
 
   return { users, setUsers, error, getSuggestedUsers };
-} 
+}

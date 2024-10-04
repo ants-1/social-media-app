@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator"
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -71,20 +72,49 @@ export function LoginForm() {
     window.location.href = "http://localhost:3000/auth/google";
   };
 
+  const handleGuestLogin = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/auth/guest", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setErrorMessage(errorData.message || "An error occurred during login.");
+        return;
+      }
+
+      const data = await response.json();
+
+      // Set the guest data into the form and submit
+      form.setValue("username", data.username);
+      form.setValue("password", data.password);
+
+      // Trigger form submission with guest credentials
+      await onSubmit({ username: data.username, password: data.password });
+
+    } catch (error) {
+      console.error("Login Error:", error);
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    }
+  };
+
   useEffect(() => {
     const fetchTokenFromUrl = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get("token");
 
       if (token) {
-        setToken(token); 
-        navigate("/"); 
+        setToken(token);
+        navigate("/");
       }
     };
 
     fetchTokenFromUrl();
   }, [navigate, setToken]);
-
 
   return (
     <Form {...form}>
@@ -135,12 +165,14 @@ export function LoginForm() {
             </Button>
           </Link>
         </div>
-          <Button type="button" variant="destructive" className="w-full" onClick={handleGoogleLogin}>
-            <FaGoogle /> <span className="ml-2">Google </span>
-          </Button>
-       
+        <Separator className="my-4" />
+        <Button type="button" variant="destructive" className="w-full" onClick={handleGoogleLogin}>
+          <FaGoogle /> <span className="ml-2">Google</span>
+        </Button>
+        <Button type="button" variant="outline" className="w-full" onClick={handleGuestLogin}>
+          Guest
+        </Button>
       </form>
     </Form>
   );
 }
-

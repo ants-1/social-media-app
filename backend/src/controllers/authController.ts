@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import passport from "passport";
 import { IUser } from "models/user";
 import generateToken from "../config/generateToken";
+import dotenv from "dotenv";
+dotenv.config();
 
 const sign_up = async (
   req: Request,
@@ -46,6 +48,19 @@ const login = async (
   })(req, res, next);
 };
 
+const guest_login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const GUEST_USERNAME = process.env.GUEST_USERNAME;
+  const GUEST_PASSWORD = process.env.GUEST_PASSWORD;
+  res.status(200).json({
+    username: GUEST_USERNAME,
+    password: GUEST_PASSWORD,
+  });
+};
+
 const logout = async (
   req: Request,
   res: Response,
@@ -74,7 +89,7 @@ const googleCallback = async (
 
       try {
         const token = generateToken(user);
-        
+
         return res.redirect(`${process.env.CLIENT_URL}/login?token=${token}`);
       } catch (err) {
         return next(err);
@@ -83,11 +98,10 @@ const googleCallback = async (
   )(req, res, next);
 };
 
-
-
 export default {
   sign_up,
   login,
+  guest_login,
   logout,
   googleCallback,
 };

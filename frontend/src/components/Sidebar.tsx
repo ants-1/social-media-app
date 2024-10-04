@@ -18,7 +18,7 @@ export default function Sidebar() {
   const { deleteFriendRequest } = useDeleteFriendRequest();
   const userId = user?._id;
 
-  const suggestedUsers = getSuggestedUsers(userData?.user) || [];
+  const suggestedUsers = getSuggestedUsers(userData?.user) || []; 
 
   function handleAcceptFriendRequest(receiverId: string, senderId: string) {
     acceptFriendRequest(receiverId, senderId);
@@ -40,25 +40,23 @@ export default function Sidebar() {
             Suggested People
           </h2>
           <ul className="space-y-4">
-            {
-              suggestedUsers.map((user) => (
-                <li key={user.username} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatarUrl} alt={user.name} />
-                      <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium">{user.name}</p>
-                      <p className="text-xs text-muted-foreground">{user.username}</p>
-                    </div>
+            {suggestedUsers.map((user) => (
+              <li key={user.username} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.avatarUrl} alt={user.name} />
+                    <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-medium">{user.name}</p>
+                    <p className="text-xs text-muted-foreground">{user.username}</p>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => sendFriendRequest(userId, user._id)}>
-                    Send Request
-                  </Button>
-                </li>
-              ))
-            }
+                </div>
+                <Button variant="outline" size="sm" onClick={() => sendFriendRequest(userId, user._id)}>
+                  Send Request
+                </Button>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -69,7 +67,7 @@ export default function Sidebar() {
               Friend Requests
             </h2>
             <ul className="space-y-4">
-              {userData?.user?.friendRequests?.map((user) => (
+              {userData.user.friendRequests.map((user) => (
                 <li key={user.username} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Avatar className="h-8 w-8">
