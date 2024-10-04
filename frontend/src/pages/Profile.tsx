@@ -67,20 +67,6 @@ export default function Profile() {
               >
                 {isUpdating ? "Cancel" : "Update Profile"}
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="ml-auto h-8 w-8 p-0">
-                    <MoreHorizontal className="h-4 w-4" />
-                    <span className="sr-only">Open menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-
-                  <DropdownMenuItem>Change Banner</DropdownMenuItem>
-                  <DropdownMenuItem>Change Avatar</DropdownMenuItem>
-
-                </DropdownMenuContent>
-              </DropdownMenu>
             </>
           )}
         </div>

@@ -46,7 +46,6 @@ const getAllUsersPosts = async (
       author: { $in: [...friendIds, user._id] },
     })
       .populate("author", "username avatarUrl")
-      .populate("likedBy", "username")
       .populate("comments")
       .sort({ timestamp: -1 })
       .exec();

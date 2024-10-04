@@ -4,7 +4,7 @@ import { AuthorType } from "@/types/AuthorType";
 
 export function useFetchAllUsers() {
   const [error, setError] = useState<string | null>(null);
-  const [users, setUsers] = useState<AuthorType[] | null>(null);
+  const [users, setUsers] = useState<AuthorType[]>([]);
   const { isAuth } = useAuth();
 
   const fetchUsers = async () => {
@@ -35,9 +35,27 @@ export function useFetchAllUsers() {
     }
   };
 
+  const getSuggestedUsers = (currentUser: AuthorType) => {
+    if (users && currentUser) {
+      const currentFriendIds = currentUser.friends?.map(friend => friend._id) || [];
+      const currentFriendRequestIds = currentUser.friendRequests?.map(request => request._id) || [];
+
+      const suggestedUsers = users?.users?.filter(user => {
+        const isFriend = currentFriendIds.includes(user._id);
+        const hasFriendRequest = currentFriendRequestIds.includes(user._id);
+        return !isFriend && !hasFriendRequest && user._id !== currentUser._id;
+      });
+
+      return suggestedUsers.slice(0, 3); 
+    }
+
+    return [];
+  };
+
+
   useEffect(() => {
     fetchUsers();
   }, [isAuth]);
 
-  return { users, setUsers, error };
+  return { users, setUsers, error, getSuggestedUsers };
 } 

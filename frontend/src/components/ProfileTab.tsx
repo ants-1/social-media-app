@@ -44,7 +44,7 @@ export default function ProfileTab({
   }
 
   return (
-    <Tabs defaultValue="posts" className="w-4/5 xl:w-3/5 mx-auto">
+    <Tabs defaultValue="posts" className="w-4/5 mx-auto">
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="posts">Posts</TabsTrigger>
         <TabsTrigger value="comments">Comments</TabsTrigger>
