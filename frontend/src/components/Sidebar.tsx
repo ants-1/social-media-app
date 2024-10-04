@@ -1,16 +1,13 @@
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, UserPlus } from "lucide-react"
+import { UserPlus } from "lucide-react"
+import SearchBar from "./SearchBar"
 
 export default function Sidebar() {
   return (
     <div className="w-full max-w-xs border-l border-gray-200 hidden lg:block">
       <div className="right-0 top-0 z-40 sticky space-y-6 p-4">
-        <div className="relative">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search" className="pl-8" />
-        </div>
+        <SearchBar />
         <div>
           <h2 className="font-semibold mb-4 flex items-center gap-2">
             <UserPlus className="h-5 w-5" />
