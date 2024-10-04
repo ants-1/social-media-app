@@ -2,34 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import User, { IUser } from "../models/user";
 import Post, { IPost } from "../models/post";
 import { Types } from "mongoose";
-import { v2 as cloudinary } from "cloudinary";
-import multer from "multer";
-
-const upload = multer({ dest: "./public/data/uploads/" });
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true,
-});
-
-const uploadImageCloudinary = async (imagePath: string) => {
-  const options = {
-    use_filename: true,
-    unique_filename: false,
-    overwrite: true,
-  };
-
-  try {
-    // Upload image
-    const result = await cloudinary.uploader.upload(imagePath, options);
-    console.log(result);
-    return result.secure_url;
-  } catch (error) {
-    console.error(error);
-  }
-};
 
 // GET /posts
 const getAllPosts = async (
@@ -111,27 +83,13 @@ const getPostDetails = async (
 };
 
 // POST /posts/users/:id
-const addPost = [
-  upload.single("img_url"),
+const addPost = 
   async (
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void | Response<any, Record<string, any>>> => {
     try {
-      let imageUrl = "";
-      if (req.file) {
-        try {
-          const result = await uploadImageCloudinary(req.file.path);
-          console.log(`result: ${result}`);
-          imageUrl = result;
-        } catch (error) {
-          return res.status(500).json({ error: "Error uploading image" });
-        }
-      } else {
-        console.log("No file uploaded or multer configuration issue");
-      }
-
       const userId = req.params.id;
       const user = await User.findById(userId);
 
@@ -142,7 +100,6 @@ const addPost = [
       const newPost = new Post({
         author: userId,
         content: req.body.content,
-        imgUrl: imageUrl
       });
 
       if (!newPost) {
@@ -157,8 +114,7 @@ const addPost = [
     } catch (err) {
       return next(err);
     }
-  },
-];
+  };
 
 // PUT /posts/:id
 const editPost = async (

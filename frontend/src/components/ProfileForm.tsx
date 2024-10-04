@@ -26,6 +26,7 @@ const FormSchema = z.object({
   }),
   description: z.string().optional(),
   location: z.string(),
+  avatarUrl: z.any().optional(),
 })
 
 export default function ProfileForm({ userData, setIsUpdating }) {
@@ -36,6 +37,7 @@ export default function ProfileForm({ userData, setIsUpdating }) {
       email: userData?.user?.email,
       description: userData?.user?.description,
       location: userData?.user?.location,
+      avatarUrl: userData?.user?.avatarUrl,
     },
   })
 
@@ -48,19 +50,28 @@ export default function ProfileForm({ userData, setIsUpdating }) {
       return;
     }
 
-    const updatedProfile = await updateProfile(data, user?._id);
-    console.log(data);
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("description", data.description || "");
+    formData.append("location", data.location);
 
+
+    if (data.avatarUrl && data.avatarUrl[0]) {
+      formData.append("avatarUrl", data.avatarUrl[0]);
+    }
+
+    const updatedProfile = await updateProfile(formData, user?._id);
     if (updatedProfile) {
       refreshUserData();
       setIsUpdating(false);
       window.location.reload();
     }
-  }
+}
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 my-10 w-4/5 xl:w-3/5 mx-auto">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 my-10 w-4/5 xl:w-3/5 mx-auto" encType="multipart/form-data">
         <FormField
           control={form.control}
           name="name"
@@ -113,9 +124,31 @@ export default function ProfileForm({ userData, setIsUpdating }) {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="avatarUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Avatar Picture</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => field.onChange(e.target.files)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {error && <p className="text-red-500">{error}</p>}
         <Button type="submit">Submit</Button>
       </form>
     </Form>
   )
 }
+
+
+
+
+

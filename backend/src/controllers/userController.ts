@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import User, { IUser } from "../models/user";
 import { Types } from "mongoose";
+import { uploadImageCloudinary } from "../config/cloudinary";
+import multer from "multer";
+
+const upload = multer({ dest: "../public/data/uploads/" });
 
 // GET /users
 const getAllUsers = async (
@@ -60,35 +64,50 @@ const getUserById = async (
 };
 
 // PUT /users/:id
-const updateUserDate = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void | Response<any, Record<string, any>>> => {
-  try {
-    const { id } = req.params;
+const updateUserDate = [
+  upload.single("avatarUrl"),
+  async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void | Response<any, Record<string, any>>> => {
+    try {
+      let imageUrl = "";
+      if (req.file) {
+        try {
+          const result = await uploadImageCloudinary(req.file.path);
+          imageUrl = result;
+        } catch (error) {
+          console.log(error);
+          return res.status(500).json({ error: "Error uploading image" });
+        }
+      }
 
-    const updatedUser = {
-      username: req.body.username,
-      name: req.body.name,
-      email: req.body.email,
-      description: req.body.description,
-      location: req.body.location,
-    };
+      const { id } = req.params;
 
-    const user = await User.findByIdAndUpdate(id, updatedUser, {
-      new: true,
-    });
+      const updatedUser = {
+        username: req.body.username,
+        name: req.body.name,
+        email: req.body.email,
+        description: req.body.description,
+        location: req.body.location,
+        avatarUrl: imageUrl || req.body.avatarUrl,
+      };
 
-    if (!user) {
-      return res.status(404).json({ error: "Username not found." });
+      const user = await User.findByIdAndUpdate(id, updatedUser, {
+        new: true,
+      });
+
+      if (!user) {
+        return res.status(404).json({ error: "Username not found." });
+      }
+
+      return res.status(200).json({ updatedUser });
+    } catch (err) {
+      return next(err);
     }
-
-    return res.status(200).json({ updatedUser });
-  } catch (err) {
-    return next(err);
-  }
-};
+  },
+];
 
 // PUT /users/password
 // const updateUserPassword = async (
@@ -116,18 +135,6 @@ const updateUserDate = async (
 //       .json({ error: "Error while updating user password" });
 //   }
 // };
-
-// const updateAvatarPic = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {};
-
-// const updateBannerPic = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {};
 
 // POST /users/:senderId/friendRequests/:receiverId
 const handleSendFriendRequest = async (
