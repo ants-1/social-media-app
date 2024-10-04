@@ -11,7 +11,7 @@ const getAllPosts = async (
 ): Promise<void | Response<any, Record<string, any>>> => {
   try {
     const posts = await Post.find()
-      .populate("author", "username imgUrl friends")
+      .populate("author", "username avatarUrl friends")
       .exec();
 
     if (!posts) {

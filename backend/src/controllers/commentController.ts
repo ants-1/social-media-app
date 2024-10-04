@@ -17,10 +17,10 @@ const getAllComments = async (
         path: "comments",
         populate: {
           path: "author",
-          select: "username imgUrl",
+          select: "username name avatarUrl",
         },
       })
-      .populate("author", "username imgUrl")
+      .populate("author", "username name avatarUrl")
       .exec();
 
     if (!post) {
@@ -62,7 +62,7 @@ const createComment = async (
     const user = await User.findById(newComment.author);
 
     if (!user) {
-      return res.status(404).json({ error: " User not found"});
+      return res.status(404).json({ error: " User not found" });
     }
 
     if (!newComment) {

@@ -34,22 +34,22 @@ const getUserById = async (
   try {
     const { id } = req.params;
     const user = await User.findById(id)
-      .populate("friends", "username name")
+      .populate("friends", "username name avatarUrl")
       .populate({
         path: "posts",
         populate: {
           path: "author",
-          select: "username name email",
+          select: "username name avatarUrl",
         },
       })
       .populate({
         path: "comments",
         populate: {
           path: "author",
-          select: "username",
+          select: "username name avatarUrl",
         },
       })
-      .populate("friendRequests", "username name")
+      .populate("friendRequests", "username name avatarUrl")
       .select("-password")
       .exec();
 
