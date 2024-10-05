@@ -39,11 +39,13 @@ export function useFetchAllUsers() {
 
     const currentFriendIds = currentUser.friends?.map(friend => friend._id) || [];
     const currentFriendRequestIds = currentUser.friendRequests?.map(request => request._id) || [];
+    const currentPendingFriendRequestIds = currentUser.pendingFriendRequests?.map(request => request._id) || [];
 
     const suggestedUsers = users?.users?.filter(user => {
       const isFriend = currentFriendIds.includes(user._id);
       const hasFriendRequest = currentFriendRequestIds.includes(user._id);
-      return !isFriend && !hasFriendRequest && user._id !== currentUser._id;
+      const hasPendingFriendRequest = currentPendingFriendRequestIds.includes(user._id);
+      return !isFriend && !hasFriendRequest && !hasPendingFriendRequest && user._id !== currentUser._id;
     });
 
     return suggestedUsers?.slice(0, 3) || [];  // Always return an empty array if undefined

@@ -17,6 +17,8 @@ router.put("/users/:receiverId/friendRequests/:senderId", userController.handleA
 
 router.delete("/users/:receiverId/friendRequests/:senderId", userController.handleDeleteFriendRequest);
 
-router.delete("/users/:userId/friends/:removedFriendId", userController.handleRemoveFriend)
+router.delete("/users/:userId/friends/:removedFriendId", userController.handleRemoveFriend);
+
+router.delete("/users/:receiverId/pendingFriendRequests/:senderId", userController.handleDeletePendingFriendRequest);
 
 export default router;

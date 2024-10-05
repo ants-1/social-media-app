@@ -50,6 +50,7 @@ const getUserById = async (
         },
       })
       .populate("friendRequests", "username name avatarUrl")
+      .populate("pendingFriendRequests", "username name avatarUrl")
       .select("-password")
       .exec();
 
@@ -155,6 +156,7 @@ const handleSendFriendRequest = async (
       return res.status(404).json({ error: "Sender or receiver not found" });
     }
 
+    // Check if the request was already made
     const alreadyRequested = receiver.friendRequests.some((id) =>
       id.equals(senderObjectId)
     );
@@ -165,6 +167,7 @@ const handleSendFriendRequest = async (
         .json({ error: "Sender has already made a friend request" });
     }
 
+    // Check if already friends
     const alreadyFriends = sender.friends.some((id) =>
       id.equals(receiverObjectId)
     );
@@ -175,10 +178,14 @@ const handleSendFriendRequest = async (
         .json({ error: "Sender is already friends with receiver" });
     }
 
-    receiver.friendRequests.push(senderObjectId);
-    await receiver.save();
+    // Update friendRequests and pendingFriendRequests
+    receiver.friendRequests.push(senderObjectId); // Add sender to receiver's friendRequests
+    sender.pendingFriendRequests.push(receiverObjectId); // Add receiver to sender's pendingFriendRequests
 
-    return res.status(200).json({ message: "Follow request sent", receiver });
+    await receiver.save();
+    await sender.save();
+
+    return res.status(200).json({ message: "Friend request sent", receiver });
   } catch (err) {
     return next(err);
   }
@@ -211,8 +218,13 @@ export const handleAcceptFriendRequest = async (
       receiver.friendRequests = receiver.friendRequests.filter(
         (friendRequestId) => !senderObjectId.equals(friendRequestId)
       );
-      sender.friendRequests = sender.friendRequests.filter(
-        (friendRequestId) => !receiverObjectId.equals(friendRequestId)
+
+      sender.pendingFriendRequests = sender.pendingFriendRequests.filter(
+        (pendingRequestId) => !receiverObjectId.equals(pendingRequestId)
+      );
+
+      receiver.pendingFriendRequests = sender.pendingFriendRequests.filter(
+        (pendingRequestId) => !receiverObjectId.equals(pendingRequestId)
       );
 
       receiver.friends.push(senderObjectId);
@@ -243,6 +255,10 @@ const handleDeleteFriendRequest = async (
   try {
     const { receiverId, senderId } = req.params;
 
+    if (!Types.ObjectId.isValid(receiverId) || !Types.ObjectId.isValid(senderId)) {
+      return res.status(400).json({ error: "Invalid sender or receiver ID" });
+    }
+
     const receiverObjectId = new Types.ObjectId(receiverId);
     const senderObjectId = new Types.ObjectId(senderId);
 
@@ -253,9 +269,7 @@ const handleDeleteFriendRequest = async (
       return res.status(404).json({ error: "Sender or receiver not found" });
     }
 
-    const isRequested = receiver.friendRequests.some((id) =>
-      id.equals(senderObjectId)
-    );
+    const isRequested = receiver.friendRequests.some((id) => id.equals(senderObjectId));
 
     if (!isRequested) {
       return res.status(404).json({ error: "Friend request not found" });
@@ -265,7 +279,11 @@ const handleDeleteFriendRequest = async (
       (id) => !id.equals(senderObjectId)
     );
 
-    await receiver.save();
+    sender.pendingFriendRequests = sender.pendingFriendRequests.filter(
+      (id) => !id.equals(receiverObjectId)
+    );
+
+    await Promise.all([receiver.save(), sender.save()]);
 
     return res.status(200).json({
       message: "Friend request deleted successfully",
@@ -277,7 +295,7 @@ const handleDeleteFriendRequest = async (
   }
 };
 
-// DELETE /users/:userId/friends/:removedFriendId"
+// DELETE /users/:userId/friends/:removedFriendId
 const handleRemoveFriend = async (
   req: Request,
   res: Response,
@@ -322,6 +340,55 @@ const handleRemoveFriend = async (
   }
 };
 
+// DELETE users/:receiverId/pendingFriendRequests/:senderId
+const handleDeletePendingFriendRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response<any, Record<string, any>>> => {
+  try {
+    const { receiverId, senderId } = req.params;
+
+    if (!Types.ObjectId.isValid(receiverId) || !Types.ObjectId.isValid(senderId)) {
+      return res.status(400).json({ error: "Invalid sender or receiver ID" });
+    }
+
+    const receiverObjectId = new Types.ObjectId(receiverId);
+    const senderObjectId = new Types.ObjectId(senderId);
+
+    const receiver = await User.findById(receiverObjectId);
+    const sender = await User.findById(senderObjectId);
+
+    if (!sender || !receiver) {
+      return res.status(404).json({ error: "Sender or receiver not found" });
+    }
+
+    const isRequested = receiver.pendingFriendRequests.some((id) => id.equals(senderObjectId));
+
+    if (!isRequested) {
+      return res.status(404).json({ error: "Pending friend request not found" });
+    }
+
+    receiver.pendingFriendRequests = receiver.pendingFriendRequests.filter(
+      (id) => !id.equals(senderObjectId)
+    );
+
+    sender.friendRequests = sender.friendRequests.filter(
+      (id) => !id.equals(receiverObjectId)
+    );
+
+    await Promise.all([receiver.save(), sender.save()]);
+
+    return res.status(200).json({
+      message: "Pending friend request deleted successfully",
+      receiver,
+      sender,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 export default {
   getAllUsers,
   getUserById,
@@ -331,4 +398,5 @@ export default {
   handleAcceptFriendRequest,
   handleDeleteFriendRequest,
   handleRemoveFriend,
+  handleDeletePendingFriendRequest,
 };

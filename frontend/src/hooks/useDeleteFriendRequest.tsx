@@ -28,7 +28,7 @@ export default function useDeleteFriendRequest() {
         return data;
       }
     } catch (error) {
-      setError(`Failed to send friends request ${error}`);
+      setError(`Failed to delete friends request ${error}`);
     }
   }
 

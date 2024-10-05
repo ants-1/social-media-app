@@ -11,6 +11,7 @@ export interface IUser {
   bannerUrl?: string;
   description?: string;
   location?: string;
+  pendingFriendRequests?: Types.ObjectId[];
   friendRequests?: Types.ObjectId[];
   friends?: Types.ObjectId[];
   posts?: Types.ObjectId[];
@@ -30,6 +31,7 @@ const UserSchema = new Schema<IUser, UserModel>({
   bannerUrl: { type: String },
   description: { type: String },
   location: { type: String, maxLength: 150 },
+  pendingFriendRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
   friendRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
   friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
   posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],

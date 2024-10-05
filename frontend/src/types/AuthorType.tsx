@@ -8,6 +8,7 @@ export interface AuthorType {
   bannerUrl?: string;
   description?: string;
   location?: string;
+  pendingFriendRequests: [];
   friendRequests?: [];
   friends?: [];
   posts?: [];
