@@ -2,6 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import User, { IUser } from "../models/user";
 import Post, { IPost } from "../models/post";
 import { Types } from "mongoose";
+import { uploadImageCloudinary } from "../config/cloudinary";
+import multer from "multer";
+
+const upload = multer({ dest: "../public/data/uploads/" });
 
 // GET /posts
 const getAllPosts = async (
@@ -82,13 +86,25 @@ const getPostDetails = async (
 };
 
 // POST /posts/users/:id
-const addPost = 
+const addPost = [
+  upload.single("imgUrl"),
   async (
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void | Response<any, Record<string, any>>> => {
     try {
+      let imageUrl = "";
+      if (req.file) {
+        try {
+          const result = await uploadImageCloudinary(req.file.path);
+          imageUrl = result;
+        } catch (error) {
+          console.log(error);
+          return res.status(500).json({ error: "Error uploading image" });
+        }
+      }
+
       const userId = req.params.id;
       const user = await User.findById(userId);
 
@@ -99,6 +115,7 @@ const addPost =
       const newPost = new Post({
         author: userId,
         content: req.body.content,
+        imgUrl: imageUrl || req.body.imgUrl,
       });
 
       if (!newPost) {
@@ -113,7 +130,8 @@ const addPost =
     } catch (err) {
       return next(err);
     }
-  };
+  },
+];
 
 // PUT /posts/:id
 const editPost = async (
@@ -202,19 +220,28 @@ export const likePost = async (
 
     const userObjectId = new Types.ObjectId(userId);
 
-    const userHasLiked = post.likedBy.some((likeId) => likeId.equals(userObjectId));
-    const userHasDisliked = post.dislikedBy.some((dislikeId) => dislikeId.equals(userObjectId));
+    const userHasLiked = post.likedBy.some((likeId) =>
+      likeId.equals(userObjectId)
+    );
+    const userHasDisliked = post.dislikedBy.some((dislikeId) =>
+      dislikeId.equals(userObjectId)
+    );
 
     if (userHasLiked) {
       post.likes = Number(post.likes) > 0 ? Number(post.likes) - 1 : 0;
-      post.likedBy = post.likedBy.filter((likeId) => !likeId.equals(userObjectId));
+      post.likedBy = post.likedBy.filter(
+        (likeId) => !likeId.equals(userObjectId)
+      );
     } else {
       post.likes = Number(post.likes) + 1;
       post.likedBy.push(userObjectId);
 
       if (userHasDisliked) {
-        post.dislikes = Number(post.dislikes) > 0 ? Number(post.dislikes) - 1 : 0;
-        post.dislikedBy = post.dislikedBy.filter((dislikeId) => !dislikeId.equals(userObjectId));
+        post.dislikes =
+          Number(post.dislikes) > 0 ? Number(post.dislikes) - 1 : 0;
+        post.dislikedBy = post.dislikedBy.filter(
+          (dislikeId) => !dislikeId.equals(userObjectId)
+        );
       }
     }
 
@@ -274,24 +301,34 @@ export const dislikePost = async (
     }
 
     if (post.author.equals(user._id)) {
-      return res.status(400).json({ error: "You cannot dislike your own post" });
+      return res
+        .status(400)
+        .json({ error: "You cannot dislike your own post" });
     }
 
     const userObjectId = new Types.ObjectId(userId);
 
-    const userHasDisliked = post.dislikedBy.some((dislikeId) => dislikeId.equals(userObjectId));
-    const userHasLiked = post.likedBy.some((likeId) => likeId.equals(userObjectId));
+    const userHasDisliked = post.dislikedBy.some((dislikeId) =>
+      dislikeId.equals(userObjectId)
+    );
+    const userHasLiked = post.likedBy.some((likeId) =>
+      likeId.equals(userObjectId)
+    );
 
     if (userHasDisliked) {
       post.dislikes = Number(post.dislikes) > 0 ? Number(post.dislikes) - 1 : 0;
-      post.dislikedBy = post.dislikedBy.filter((dislikeId) => !dislikeId.equals(userObjectId));
+      post.dislikedBy = post.dislikedBy.filter(
+        (dislikeId) => !dislikeId.equals(userObjectId)
+      );
     } else {
       post.dislikes = Number(post.dislikes) + 1;
       post.dislikedBy.push(userObjectId);
 
       if (userHasLiked) {
         post.likes = Number(post.likes) > 0 ? Number(post.likes) - 1 : 0;
-        post.likedBy = post.likedBy.filter((likeId) => !likeId.equals(userObjectId));
+        post.likedBy = post.likedBy.filter(
+          (likeId) => !likeId.equals(userObjectId)
+        );
       }
     }
 

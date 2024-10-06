@@ -12,7 +12,7 @@ export default function PostCard({ post }: PostCardPropsType) {
   const [dislikeCount, setDislikeCount] = useState<number>(post.dislikes || 0);
   const [userLiked, setUserLiked] = useState<boolean>(false);
   const [userDisliked, setUserDisliked] = useState<boolean>(false);
-  const [isAuthor, setIsAuthor] = useState<boolean>(false); 
+  const [isAuthor, setIsAuthor] = useState<boolean>(false);
 
   const { user } = useAuth();
 
@@ -24,13 +24,13 @@ export default function PostCard({ post }: PostCardPropsType) {
       setUserDisliked(true);
     }
     if (user && post.author._id === user._id) {
-      setIsAuthor(true); 
+      setIsAuthor(true);
     }
   }, [user, post.likedBy, post.dislikedBy, post.author._id]);
 
   const handleLike = async () => {
     if (isAuthor) return;
-  
+
     try {
       const response = await fetch(`http://localhost:3000/posts/${post._id}/users/${user?._id}/likes`, {
         method: "POST",
@@ -38,9 +38,9 @@ export default function PostCard({ post }: PostCardPropsType) {
           "Content-Type": "application/json",
         },
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         setLikeCount(data.likes);
         setDislikeCount(data.dislikes);
@@ -55,10 +55,10 @@ export default function PostCard({ post }: PostCardPropsType) {
       console.error("Error liking the post", error);
     }
   };
-  
+
   const handleDislike = async () => {
-    if (isAuthor) return; 
-  
+    if (isAuthor) return;
+
     try {
       const response = await fetch(`http://localhost:3000/posts/${post._id}/users/${user?._id}/dislikes`, {
         method: "POST",
@@ -66,9 +66,9 @@ export default function PostCard({ post }: PostCardPropsType) {
           "Content-Type": "application/json",
         },
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         setDislikeCount(data.dislikes);
         setLikeCount(data.likes);
@@ -83,7 +83,7 @@ export default function PostCard({ post }: PostCardPropsType) {
       console.error("Error disliking the post", error);
     }
   };
-  
+
 
   return (
     <Card className="w-4/5 max-w-[32rem] space-y-2">
@@ -104,9 +104,14 @@ export default function PostCard({ post }: PostCardPropsType) {
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-sm">
+        <p className="text-sm mb-2">
           {post.content}
         </p>
+        {post.imgUrl ?
+          (
+            <img src={post.imgUrl} alt="Post image" />
+          ) : ""
+        }
       </CardContent>
       <CardFooter className="flex justify-between">
         <div className="flex gap-2">
@@ -125,7 +130,7 @@ export default function PostCard({ post }: PostCardPropsType) {
             size="sm"
             className={`${userDisliked ? "bg-red-600 hover:bg-red-700" : "text-red-600"}`}
             onClick={handleDislike}
-            disabled={isAuthor} 
+            disabled={isAuthor}
           >
             <ThumbsDown className="w-4 h-4 mr-1" />
             {dislikeCount}

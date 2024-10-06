@@ -7,13 +7,6 @@ import ProfileForm from "@/components/ProfileForm"
 
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { MoreHorizontal } from "lucide-react"
 import { useFetchUserData } from "@/hooks/useFetchUserData"
 import { AuthorType } from "@/types/AuthorType"
 import { CommentType } from "@/types/CommentType"

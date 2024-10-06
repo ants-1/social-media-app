@@ -156,7 +156,6 @@ const handleSendFriendRequest = async (
       return res.status(404).json({ error: "Sender or receiver not found" });
     }
 
-    // Check if the request was already made
     const alreadyRequested = receiver.friendRequests.some((id) =>
       id.equals(senderObjectId)
     );
@@ -167,7 +166,6 @@ const handleSendFriendRequest = async (
         .json({ error: "Sender has already made a friend request" });
     }
 
-    // Check if already friends
     const alreadyFriends = sender.friends.some((id) =>
       id.equals(receiverObjectId)
     );
@@ -178,9 +176,8 @@ const handleSendFriendRequest = async (
         .json({ error: "Sender is already friends with receiver" });
     }
 
-    // Update friendRequests and pendingFriendRequests
-    receiver.friendRequests.push(senderObjectId); // Add sender to receiver's friendRequests
-    sender.pendingFriendRequests.push(receiverObjectId); // Add receiver to sender's pendingFriendRequests
+    receiver.friendRequests.push(senderObjectId); 
+    sender.pendingFriendRequests.push(receiverObjectId);
 
     await receiver.save();
     await sender.save();
