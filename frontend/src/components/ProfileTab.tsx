@@ -14,6 +14,7 @@ import { useParams } from "react-router-dom";
 import useAcceptFriendRequest from "@/hooks/useAcceptFriendRequest";
 import useDeleteFriendRequest from "@/hooks/useDeleteFriendRequest";
 import useDeleteFriend from "@/hooks/useDeleteFriend";
+import { useTheme } from "./ThemeProvider";
 
 export default function ProfileTab({
   posts,
@@ -23,6 +24,7 @@ export default function ProfileTab({
 }: ProfileTabProps) {
   const { userId } = useParams<{ userId: string }>();
   const { user } = useAuth();
+  const { theme } = useTheme();
   const isOwnProfile = user?._id === userId;
   const { acceptFriendRequest } = useAcceptFriendRequest();
   const { deleteFriendRequest } = useDeleteFriendRequest();
@@ -55,14 +57,15 @@ export default function ProfileTab({
       <TabsContent value="posts" className="space-y-4 flex flex-col items-center">
         {posts ? (
           posts.length > 0 ? (
-            posts.map((post: PostType) => <PostCard key={post._id} post={post} />)
+            posts.slice().reverse().map((post: PostType) => <PostCard key={post._id} post={post} />)
           ) : (
             <p>No posts available</p>
           )
         ) : (
-          <ReactLoading className="mt-10" type={"spin"} color="#000" />
+          <ReactLoading type={"spin"} color={`${theme === "dark" ? "#fff" : "#000"}`} />
         )}
       </TabsContent>
+
 
       {/* Comments Tab */}
       <TabsContent value="comments" className="space-y-4 flex flex-col items-center">
@@ -73,7 +76,7 @@ export default function ProfileTab({
             <p className="mt-10">No comments available</p>
           )
         ) : (
-          <ReactLoading className="mt-10" type={"spin"} color="#000" />
+          <ReactLoading type={"spin"} color={`${theme === "dark" ? "#fff" : "#000"}`} />
         )}
       </TabsContent>
 
@@ -119,7 +122,7 @@ export default function ProfileTab({
                 <p>No friend requests available</p>
               )
             ) : (
-              <ReactLoading className="mt-10" type={"spin"} color="#000" />
+              <ReactLoading type={"spin"} color={`${theme === "dark" ? "#fff" : "#000"}`} />
             )}
           </>
         )}
@@ -157,7 +160,7 @@ export default function ProfileTab({
             <p>No friends available</p>
           )
         ) : (
-          <ReactLoading className="mt-10" type={"spin"} color="#000" />
+          <ReactLoading type={"spin"} color={`${theme === "dark" ? "#fff" : "#000"}`} />
         )}
       </TabsContent>
     </Tabs>

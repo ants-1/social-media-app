@@ -1,8 +1,7 @@
-import { useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { ThumbsDown, ThumbsUp, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,38 +12,6 @@ import { CommentCardProps } from "@/types/CommentCardType"
 import { Link } from "react-router-dom"
 
 export default function CommentCard({ comment }: CommentCardProps) {
-  const [likeCount, setLikeCount] = useState(0)
-  const [dislikeCount, setDislikeCount] = useState(0)
-  const [userLiked, setUserLiked] = useState(false)
-  const [userDisliked, setUserDisliked] = useState(false)
-
-  const handleLike = () => {
-    if (userLiked) {
-      setLikeCount(likeCount - 1)
-      setUserLiked(false)
-    } else {
-      setLikeCount(likeCount + 1)
-      setUserLiked(true)
-      if (userDisliked) {
-        setDislikeCount(dislikeCount - 1)
-        setUserDisliked(false)
-      }
-    }
-  }
-
-  const handleDislike = () => {
-    if (userDisliked) {
-      setDislikeCount(dislikeCount - 1)
-      setUserDisliked(false)
-    } else {
-      setDislikeCount(dislikeCount + 1)
-      setUserDisliked(true)
-      if (userLiked) {
-        setLikeCount(likeCount - 1)
-        setUserLiked(false)
-      }
-    }
-  }
 
   return (
     <Card className="w-4/5 max-w-[32rem]">
@@ -82,26 +49,6 @@ export default function CommentCard({ comment }: CommentCardProps) {
         </p>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <div className="flex gap-2">
-          <Button
-            variant={userLiked ? "default" : "ghost"}
-            size="sm"
-            className={`${userLiked ? "bg-green-600 hover:bg-green-700" : "text-green-600"}`}
-            onClick={handleLike}
-          >
-            <ThumbsUp className="w-4 h-4 mr-1" />
-            {likeCount}
-          </Button>
-          <Button
-            variant={userDisliked ? "default" : "ghost"}
-            size="sm"
-            className={`${userDisliked ? "bg-red-600 hover:bg-red-700" : "text-red-600"}`}
-            onClick={handleDislike}
-          >
-            <ThumbsDown className="w-4 h-4 mr-1" />
-            {dislikeCount}
-          </Button>
-        </div>
       </CardFooter>
     </Card>
   )

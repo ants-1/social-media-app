@@ -2,11 +2,13 @@ import CollapsibleSidebar from "@/components/CollapsibleSidebar";
 import Header from "@/components/Header";
 import PostCard from "@/components/PostCard";
 import Sidebar from "@/components/Sidebar";
+import { useTheme } from "@/components/ThemeProvider";
 import { useFetchAllPosts } from "@/hooks/useFetchAllPosts";
 import ReactLoading from "react-loading";
 
 export default function Explore() {
   const { posts, error } = useFetchAllPosts();
+  const { theme } = useTheme();
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -28,7 +30,7 @@ export default function Explore() {
               <p>No posts available</p>
             )
           ) : (
-            <ReactLoading type={"spin"} color="#000" />
+            <ReactLoading type={"spin"} color={`${theme === "dark" ? "#fff" : "#000"}`} />
           )}
         </div>
       </div>

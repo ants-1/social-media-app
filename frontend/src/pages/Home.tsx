@@ -6,17 +6,19 @@ import Sidebar from "@/components/Sidebar"
 import { useFetchHomePosts } from "@/hooks/useFetchHomePosts"
 import useAuth from "@/hooks/useAuth"
 import ReactLoading from "react-loading";
+import { useTheme } from "@/components/ThemeProvider"
 
 export default function Home() {
   const { user } = useAuth();
   const { posts, error } = useFetchHomePosts();
+  const { theme } = useTheme();
 
   if (error) {
     return <div>Error: {error}</div>
   }
 
   if (!user) {
-    return <ReactLoading type={"spin"} color="#000" />;
+    return <ReactLoading type={"spin"} color={`${theme === "dark" ? "#fff" : "#000"}`} />;
   }
 
   return (
@@ -37,7 +39,7 @@ export default function Home() {
               <p>No posts available</p>
             )
           ) : (
-            <ReactLoading type={"spin"} color="#000" />
+            <ReactLoading type={"spin"} color={`${theme === "dark" ? "#fff" : "#000"}`} />
           )}
 
         </div>

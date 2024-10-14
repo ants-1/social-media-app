@@ -6,27 +6,31 @@ import { ThumbsDown, ThumbsUp, MessageCircle } from "lucide-react";
 import { PostCardPropsType } from "@/types/PostCardPropsType";
 import { Link } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
+import ReactLoading from "react-loading";
+import { useTheme } from "./ThemeProvider";
 
 export default function PostCard({ post }: PostCardPropsType) {
-  const [likeCount, setLikeCount] = useState<number>(post.likes || 0);
-  const [dislikeCount, setDislikeCount] = useState<number>(post.dislikes || 0);
+  const [likeCount, setLikeCount] = useState<number>(post ? post.likes : 0);
+  const [dislikeCount, setDislikeCount] = useState<number>(post ? post.dislikes : 0);
   const [userLiked, setUserLiked] = useState<boolean>(false);
   const [userDisliked, setUserDisliked] = useState<boolean>(false);
   const [isAuthor, setIsAuthor] = useState<boolean>(false);
 
   const { user } = useAuth();
+  const { theme } = useTheme();
 
   useEffect(() => {
-    if (user && post.likedBy.includes(user._id)) {
-      setUserLiked(true);
+    if (post) {
+        setLikeCount(post.likes || 0);
+        setDislikeCount(post.dislikes || 0);
+        
+        if (user) {
+            setUserLiked(post.likedBy.includes(user._id));
+            setUserDisliked(post.dislikedBy.includes(user._id));
+            setIsAuthor(post.author._id === user._id);
+        }
     }
-    if (user && post.dislikedBy.includes(user._id)) {
-      setUserDisliked(true);
-    }
-    if (user && post.author._id === user._id) {
-      setIsAuthor(true);
-    }
-  }, [user, post.likedBy, post.dislikedBy, post.author._id]);
+}, [user, post]);
 
   const handleLike = async () => {
     if (isAuthor) return;
@@ -84,6 +88,9 @@ export default function PostCard({ post }: PostCardPropsType) {
     }
   };
 
+  if (!post) {
+    return <ReactLoading type={"spin"} color={`${theme === "dark" ? "#fff" : "#000"}`} />;
+  }
 
   return (
     <Card className="w-4/5 max-w-[32rem] space-y-2">

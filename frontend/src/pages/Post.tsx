@@ -28,7 +28,7 @@ export default function Post() {
   }
 
   if (!post) {
-    return <ReactLoading type={"spin"} color="#000" />;
+    <ReactLoading type={"spin"} color={`${theme === "dark" ? "#fff" : "#000"}`} />
   }
 
   return (
@@ -52,7 +52,7 @@ export default function Post() {
               <p>No comments available</p>
             )
           ) : (
-            <ReactLoading type={"spin"} color="#000" />
+            <ReactLoading type={"spin"} color={`${theme === "dark" ? "#fff" : "#000"}`} />
           )
           }
         </div>
