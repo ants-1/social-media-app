@@ -41,7 +41,7 @@ export default function CollapsibleSidebar() {
       <div className="flex h-full">
         <div className={`flex flex-col ${isOpen ? 'w-64' : 'w-18'} p-4`}>
           <div className="mb-4 flex items-center justify-between">
-            {isOpen && <h2 className="text-lg font-semibold">Logo</h2>}
+            {isOpen && <h2 className="text-lg font-semibold">SocialSphere</h2>}
             <CollapsibleTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8 md:block hidden">
                 {isOpen ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
